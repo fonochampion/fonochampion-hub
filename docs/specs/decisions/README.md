@@ -12,3 +12,7 @@ Start with [000-template.md](./000-template.md). When recording a decision, incl
 - [004 — Responsive standard layout](./004-responsive-standard-layout.md)
 - [005 — Docker local development environment](./005-docker-local-development.md)
 - [006 — Visual color system](./006-visual-color-system.md)
+- [007 — Initial professional registration scope](./007-professional-registration.md)
+- [008 — Patient-professional association](./008-patient-professional-association.md)
+- [009 — Patient anamnesis records](./009-patient-anamnesis-records.md)
+- [010 — Patient attendance and evolution records](./010-patient-attendance-and-evolution.md)
