@@ -21,5 +21,5 @@ This decision resolves the association and reactivation aspects left open by ADR
 ## Consequences
 
 - **Benefits:** Reactivation does not require rebuilding patient associations, while inactive professionals are excluded from new scheduling.
-- **Costs or risks:** Professional deletion semantics and which user roles may schedule remain open.
-- **Follow-up actions:** Define professional deletion semantics and scheduling permissions before implementing those parts of the lifecycle.
+- **Costs or risks:** Professional deletion semantics remain open.
+- **Follow-up actions:** Define professional deletion semantics before implementing that part of the lifecycle. Scheduling permissions are specified in ADR-018.

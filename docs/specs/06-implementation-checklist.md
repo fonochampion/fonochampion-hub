@@ -26,18 +26,18 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 
 | Gate | Open decision | Source |
 |---|---|---|
-| DG-001 | Age representation and validation | [UC-001](./05-use-cases.md#uc-001--register-a-patient) |
-| DG-002 | How CID is managed before the deferred public API integration | [UC-001](./05-use-cases.md#uc-001--register-a-patient) |
+| DG-001 | Age representation and validation | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis) |
+| DG-002 | How CID is managed before the deferred public API integration | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis) |
 | DG-003 | Kinship values, patient/responsible-person cardinality, and duplicate handling | [UC-002](./05-use-cases.md#uc-002--register-and-associate-a-responsible-person) |
 | DG-004 | Contact requiredness, multiplicity, and validation | [UC-003](./05-use-cases.md#uc-003--register-contact-methods-for-a-responsible-person) |
 | DG-005 | Professional basic-data fields, CPF requiredness/validation, certification and contact rules, and editable fields | [UC-004–UC-005](./05-use-cases.md#use-cases) |
-| DG-006 | Authentication, user roles, and authorization | [Requirements](./01-requirements.md#assumptions-and-open-questions) |
+| DG-006 | Authentication method, account fields and deletion/lifecycle details, access-reset mechanics, and initial Administrator provisioning | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles) |
 | DG-007 | Professional deletion semantics | [UC-007](./05-use-cases.md#uc-007--delete-a-professional) |
-| DG-008 | Anamnesis access controls, privacy/retention, detailed section prompts, and revision metadata | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [Data and Integrations](./04-data-and-integrations.md#privacy-and-security) |
-| DG-009 | Attendance/evolution access controls and privacy | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [Data and Integrations](./04-data-and-integrations.md#privacy-and-security) |
+| DG-008 | Anamnesis privacy/retention, detailed section prompts, and revision metadata; role access is defined in ADR-018 | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [Data and Integrations](./04-data-and-integrations.md#privacy-and-security) |
+| DG-009 | Attendance/evolution privacy and legal/data-handling requirements; role access is defined in ADR-018 | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [Data and Integrations](./04-data-and-integrations.md#privacy-and-security) |
 | DG-010 | RESOLVED — association removal preserves existing attendance/evolution records and leaves already scheduled attendance participants unchanged | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-015](./decisions/015-preserve-attendance-history-after-association-removal.md) |
 | DG-011 | RESOLVED — fixed duration options are 10, 20, 30, 40, 50, or 60 minutes per attendance; rescheduling requires a new selection | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-013](./decisions/013-initial-attendance-scheduling-and-lifecycle.md) |
-| DG-012 | Permissions to maintain cancellation reasons and configurable values (excluding the fixed `Remarcação` system reason) | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance) |
+| DG-012 | PARTIALLY RESOLVED — Administrators maintain configurable cancellation reasons; remaining reason values are open (excluding fixed `Remarcação`) | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-018](./decisions/018-initial-user-roles-and-permissions.md) |
 | DG-013 | RESOLVED — rescheduling removes inactive participants; if none remain, select active associated professionals or create associations from the active registry | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-017](./decisions/017-scheduling-creates-professional-association.md) |
 
 ## Phase 1 — Application foundation
@@ -48,6 +48,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | IMP-002 | Configure ASP.NET Core MVC, Entity Framework Core, Npgsql, and PostgreSQL persistence in the confirmed modular-monolith structure. | IMP-001 | PENDING |
 | IMP-003 | Add the root `Dockerfile` and `docker-compose.yml` for local ASP.NET Core and PostgreSQL execution. | IMP-001, IMP-002 | PENDING |
 | IMP-004 | Build the shared Bootstrap 5 responsive shell: header, collapsible navigation, content area, footer, and confirmed color system. | IMP-001 | PENDING |
+| IMP-020 | Manage system-user accounts: create/edit accounts, assign or change exactly one initial role, activate/inactivate accounts, and initiate access resets. | IMP-002; DG-006 | BLOCKED |
 
 ## Phase 2 — Patient and responsible-person features
 
@@ -75,9 +76,9 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 
 | ID | Implementation item | Depends on | Status |
 |---|---|---|---|
-| IMP-012 | Apply confirmed authentication and authorization rules to implemented operations. | IMP-005–IMP-011, IMP-015–IMP-019; DG-006 | BLOCKED |
-| IMP-013 | Verify implemented screens on desktop, tablet, and smartphone, including the shared layout and confirmed visual system. | IMP-004–IMP-011, IMP-015–IMP-019 | BLOCKED |
-| IMP-014 | Run the relevant automated tests and project checks for the approved implementation scope; record the results with the delivery. | IMP-001–IMP-013, IMP-015–IMP-019 | BLOCKED |
+| IMP-012 | Apply confirmed authentication and authorization rules to implemented operations. | IMP-005–IMP-011, IMP-015–IMP-020; DG-006 | BLOCKED |
+| IMP-013 | Verify implemented screens on desktop, tablet, and smartphone, including the shared layout and confirmed color system. | IMP-004–IMP-011, IMP-015–IMP-020 | BLOCKED |
+| IMP-014 | Run the relevant automated tests and project checks for the approved implementation scope; record the results with the delivery. | IMP-001–IMP-013, IMP-015–IMP-020 | BLOCKED |
 
 ## Deferred or excluded from the current roadmap
 

@@ -22,6 +22,7 @@ Start with [000-template.md](./000-template.md). When recording a decision, incl
 - [015 — Preserve attendance history after association removal](./015-preserve-attendance-history-after-association-removal.md)
 - [016 — Retain associations during professional inactivation](./016-retain-associations-during-professional-inactivation.md)
 - [017 — Scheduling creates a professional association](./017-scheduling-creates-professional-association.md)
+- [018 — Initial user roles and permissions](./018-initial-user-roles-and-permissions.md)
 
 ## Superseded decisions
 

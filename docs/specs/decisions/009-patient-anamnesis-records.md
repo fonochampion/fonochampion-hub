@@ -20,7 +20,7 @@ Patient registration needs to support recording speech-language therapy anamnesi
 - Anamnesis may combine structured fields with free-text observations.
 - Each anamnesis is a separate dated record. Creating a new record does not overwrite earlier records.
 - Editing an existing record preserves previous versions and change history.
-- Detailed prompts or value sets, revision-history metadata, access controls, privacy, and retention remain open. The requester will address access-control decisions later.
+- Detailed prompts or value sets, revision-history metadata, privacy, and retention remain open. Role-based access is specified by ADR-018; applicable legal and data-handling constraints remain open.
 
 Detailed flows and acceptance criteria are in [05 — Use Cases](../05-use-cases.md).
 

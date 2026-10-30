@@ -12,7 +12,7 @@
 
 ## Users
 
-- **Primary audience:** To be defined; specific user roles are open.
+- **Primary audience:** System administrators, attendants, and therapists, with responsibilities defined in [05 — Use Cases](./05-use-cases.md).
 - **Needs and pain points:** To be defined
 - **Secondary audiences:** To be defined
 
@@ -24,11 +24,11 @@
 
 ## Scope
 
-- **Included in the initial stage:** Register patients with responsible persons and their contacts; optionally associate one or more already registered, active fonoaudiólogos during patient registration and allow their later association through the patient record or scheduling flow when no active association exists; optionally record dated anamneses with preserved history; schedule and record patient attendances with their scheduled and actual realization periods, defined status flow, and one optional current evolution per participating professional; register and maintain professionals with basic data, certifications, and contacts. A professional may be associated with multiple patients. See [05 — Use Cases](./05-use-cases.md).
+- **Included in the initial stage:** Register patients with responsible persons and their contacts; optionally associate one or more already registered, active fonoaudiólogos during patient registration and allow their later association through the patient record or scheduling flow when no active association exists; optionally record dated anamneses with preserved history; schedule and record patient attendances with their scheduled and actual realization periods, defined status flow, and one optional current evolution per participating professional; register and maintain professionals with basic data, certifications, and contacts; manage system-user accounts and assign exactly one of the defined roles. A professional may be associated with multiple patients. See [05 — Use Cases](./05-use-cases.md).
 - **Explicitly out of scope:** To be defined
 - **Known dependencies and constraints:** To be defined
 
 ## Assumptions and open questions
 
-- **Assumptions to validate:** Patient age representation, CID behavior before its future public API integration, professional basic-data fields, and remaining validation/cardinality rules remain open. Anamnesis section details, revision metadata, access controls, privacy, and retention remain open. Attendance/evolution access controls and privacy, cancellation-reason maintenance permissions and remaining values, and other user roles remain open. Attendance/evolution records are retained permanently; specified audit metadata and the fixed per-attendance duration options are defined. Association removal and professional inactivation preserve existing attendance participation as specified in UC-008. Attendance scheduling is included in the initial stage; scheduled date/time are required, and actual start/end times are recorded when the professional changes the attendance state. Professional registration is initially limited to fonoaudiólogos; support for other professions may be considered later.
-- **Outstanding questions:** Product name, user roles, success measures, detailed first-release scope beyond the initial registration stage, and how the product currently addresses the problem.
+- **Assumptions to validate:** Patient age representation, CID behavior before its future public API integration, professional basic-data fields, and remaining validation/cardinality rules remain open. Anamnesis section details, revision metadata, privacy, and retention remain open; role access is defined in UC-009. Attendance/evolution privacy and legal/data-handling requirements and remaining cancellation-reason values remain open. Attendance/evolution records are retained permanently; specified audit metadata and the fixed per-attendance duration options are defined. Association removal and professional inactivation preserve existing attendance participation as specified in UC-008. Attendance scheduling is included in the initial stage; scheduled date/time are required, and actual start/end times are recorded when the professional changes the attendance state. Professional registration is initially limited to fonoaudiólogos; support for other professions may be considered later. User-account fields, authentication and reset mechanics, initial administrator provisioning, and account deletion remain open.
+- **Outstanding questions:** Product name, success measures, detailed first-release scope beyond the initial registration stage, and how the product currently addresses the problem.
