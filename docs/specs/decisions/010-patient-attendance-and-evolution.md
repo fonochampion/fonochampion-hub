@@ -1,6 +1,6 @@
 # ADR-010: Patient Attendance and Evolution Records
 
-**Status:** Accepted
+**Status:** Superseded by ADR-013 on 2026-10-30
 **Date:** 2026-10-29
 
 ## Context
