@@ -19,15 +19,15 @@ Patient registration must allow the system user to include the professional or p
 - An active, registered professional may be added later through the patient record.
 - A professional may be associated with multiple patients.
 - An unregistered or inactive professional cannot be selected for a new association during patient registration.
-- At least one active professional must already be associated with a patient before an attendance can be recorded. An attendance cannot itself create the patient-professional association.
+- Each attendance must have one or more active professionals associated with the patient when scheduling completes. If none are actively associated, the scheduling flow creates associations for the selected active professionals, as specified by ADR-017.
 - A professional associated with one or more patients cannot be deleted.
-- Whether an association can be removed from a patient, and the effects of removal on existing attendance records, remain open.
-- The effects of professional inactivation on existing patient associations remain open.
+- An association may be removed without deleting or altering existing attendance/evolution records, and already scheduled attendances and their participants remain unchanged, as specified by ADR-015.
+- Professional inactivation retains existing patient associations, prevents new scheduling involving the inactive professional, and reactivation restores the associations. Inactivation does not alter existing attendance participation or prevent otherwise-allowed evolution updates. See ADR-016.
 
 Detailed flows and acceptance criteria are in [05 — Use Cases](../05-use-cases.md).
 
 ## Consequences
 
-- **Benefits:** Defines association cardinality, permits adding a professional through the patient record, and establishes the prerequisite for recording attendances while allowing a patient to exist without a professional.
-- **Costs or risks:** Removal of associations and the effects of professional inactivation or association removal on attendance records still require decisions.
-- **Follow-up actions:** Resolve the open lifecycle questions before implementing association removal or related attendance-history behavior.
+- **Benefits:** Defines association cardinality, permits adding a professional through the patient record, and allows a patient to exist without a professional. Scheduling-flow association creation is defined by ADR-017.
+- **Costs or risks:** Professional deletion semantics remain open.
+- **Follow-up actions:** Implement association removal while preserving attendance/evolution history; resolve professional deletion semantics separately. Scheduling-flow association creation is defined by ADR-017.

@@ -1,7 +1,7 @@
 # Implementation Roadmap
 
 **Status:** Working roadmap
-**Last reviewed:** 2026-10-29
+**Last reviewed:** 2026-10-30
 
 This is the master, hierarchical list of approved implementation work. The specifications in this directory remain the source of truth for scope and behavior; this roadmap tracks implementation status and sequence. Its order reflects dependencies, not priority or a commitment to implement every item in one delivery.
 
@@ -32,10 +32,13 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | DG-004 | Contact requiredness, multiplicity, and validation | [UC-003](./05-use-cases.md#uc-003--register-contact-methods-for-a-responsible-person) |
 | DG-005 | Professional basic-data fields, CPF requiredness/validation, certification and contact rules, and editable fields | [UC-004–UC-005](./05-use-cases.md#use-cases) |
 | DG-006 | Authentication, user roles, and authorization | [Requirements](./01-requirements.md#assumptions-and-open-questions) |
-| DG-007 | Effects of inactivation on existing patient associations and professional deletion semantics | [UC-006–UC-007](./05-use-cases.md#use-cases) |
+| DG-007 | Professional deletion semantics | [UC-007](./05-use-cases.md#uc-007--delete-a-professional) |
 | DG-008 | Anamnesis access controls, privacy/retention, detailed section prompts, and revision metadata | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [Data and Integrations](./04-data-and-integrations.md#privacy-and-security) |
-| DG-009 | Attendance/evolution access controls, privacy/retention, and revision metadata | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [Data and Integrations](./04-data-and-integrations.md#privacy-and-security) |
-| DG-010 | Effects of removing a patient-professional association on existing attendance records and evolutions | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance) |
+| DG-009 | Attendance/evolution access controls and privacy | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [Data and Integrations](./04-data-and-integrations.md#privacy-and-security) |
+| DG-010 | RESOLVED — association removal preserves existing attendance/evolution records and leaves already scheduled attendance participants unchanged | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-015](./decisions/015-preserve-attendance-history-after-association-removal.md) |
+| DG-011 | RESOLVED — fixed duration options are 10, 20, 30, 40, 50, or 60 minutes per attendance; rescheduling requires a new selection | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-013](./decisions/013-initial-attendance-scheduling-and-lifecycle.md) |
+| DG-012 | Permissions to maintain cancellation reasons and configurable values (excluding the fixed `Remarcação` system reason) | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance) |
+| DG-013 | RESOLVED — rescheduling removes inactive participants; if none remain, select active associated professionals or create associations from the active registry | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-017](./decisions/017-scheduling-creates-professional-association.md) |
 
 ## Phase 1 — Application foundation
 
@@ -55,24 +58,26 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | IMP-006 | Register a responsible person with full name and degree of kinship and associate them with a patient. | IMP-005; DG-003 | BLOCKED |
 | IMP-007 | Register telephone and email contact details for a responsible person. | IMP-006; DG-004 | BLOCKED |
 
-## Phase 3 — Professional and attendance features
+## Phase 3 — Professional, scheduling, and attendance features
 
 | ID | Feature | Depends on | Status |
 |---|---|---|---|
 | IMP-008 | Register a fonoaudiólogo with confirmed basic data, unique CPF, certifications, and telephone/email contacts. | IMP-002; DG-005 | BLOCKED |
-| IMP-015 | Allow association of one or more existing, active professionals during initial patient registration and later through the patient record; support each professional being associated with multiple patients. | IMP-005, IMP-008 | BLOCKED |
-| IMP-017 | Record completed patient attendances only when the patient already has at least one associated active professional; support adding more associated active professionals after saving and optional per-professional evolution entries with preserved revisions. | IMP-015; DG-009 | BLOCKED |
+| IMP-015 | Allow association of one or more existing, active professionals during initial patient registration, later through the patient record, and through scheduling when no active association exists; support each professional being associated with multiple patients. | IMP-005, IMP-008 | BLOCKED |
+| IMP-017 | Schedule and maintain patient attendances with required scheduled date/time and a fixed duration option per attendance, patient/professional overlap prevention, scheduling-flow association creation when needed, status transitions, actual realization timestamps, late indication, rescheduling with inactive-participant removal and a new duration selection, cancellation, and one current evolution entry per professional. | IMP-015, IMP-018; DG-006, DG-009, DG-012 | BLOCKED |
+| IMP-018 | Provide configurable cancellation-reason maintenance with create, list, edit, and inactivate operations; exclude the fixed `Remarcação` system reason, which is assigned automatically during rescheduling. | IMP-002; DG-006, DG-012 | BLOCKED |
+| IMP-019 | Remove patient-professional associations without deleting or altering existing attendance/evolution records or changing already scheduled attendance participants. | IMP-015, IMP-017; DG-006 | BLOCKED |
 | IMP-009 | Modify a professional, including the confirmed CPF uniqueness and certification/contact maintenance rules. | IMP-008; DG-005 | BLOCKED |
-| IMP-010 | Inactivate a professional and apply the confirmed effects to its patient associations. | IMP-008; DG-007 | BLOCKED |
+| IMP-010 | Inactivate/reactivate a professional, preserve patient associations during inactivity, apply the confirmed scheduling restriction, and preserve existing attendance participation/evolution rights. | IMP-008; DG-006 | BLOCKED |
 | IMP-011 | Delete a professional only when no patient is associated, using the confirmed deletion semantics. | IMP-008; DG-007 | BLOCKED |
 
 ## Phase 4 — Cross-cutting completion
 
 | ID | Implementation item | Depends on | Status |
 |---|---|---|---|
-| IMP-012 | Apply confirmed authentication and authorization rules to implemented operations. | IMP-005–IMP-011, IMP-015–IMP-017; DG-006 | BLOCKED |
-| IMP-013 | Verify implemented screens on desktop, tablet, and smartphone, including the shared layout and confirmed visual system. | IMP-004–IMP-011, IMP-015–IMP-017 | BLOCKED |
-| IMP-014 | Run the relevant automated tests and project checks for the approved implementation scope; record the results with the delivery. | IMP-001–IMP-013, IMP-015–IMP-017 | BLOCKED |
+| IMP-012 | Apply confirmed authentication and authorization rules to implemented operations. | IMP-005–IMP-011, IMP-015–IMP-019; DG-006 | BLOCKED |
+| IMP-013 | Verify implemented screens on desktop, tablet, and smartphone, including the shared layout and confirmed visual system. | IMP-004–IMP-011, IMP-015–IMP-019 | BLOCKED |
+| IMP-014 | Run the relevant automated tests and project checks for the approved implementation scope; record the results with the delivery. | IMP-001–IMP-013, IMP-015–IMP-019 | BLOCKED |
 
 ## Deferred or excluded from the current roadmap
 
@@ -80,4 +85,4 @@ Do not implement these unless they are specified and approved as a future scope 
 
 - Public API retrieval of patient CID.
 - Public API retrieval of professional council-registration information.
-- Appointment scheduling and its lifecycle, billing, and other features not confirmed in the current scope. Attendance recording is specified in [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance); when scheduling is later introduced, its relationship to attendance records must follow the confirmed requirement.
+- Billing and other features not confirmed in the current scope.

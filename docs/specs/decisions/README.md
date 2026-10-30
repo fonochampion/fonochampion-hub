@@ -15,4 +15,14 @@ Start with [000-template.md](./000-template.md). When recording a decision, incl
 - [007 — Initial professional registration scope](./007-professional-registration.md)
 - [008 — Patient-professional association](./008-patient-professional-association.md)
 - [009 — Patient anamnesis records](./009-patient-anamnesis-records.md)
-- [010 — Patient attendance and evolution records](./010-patient-attendance-and-evolution.md)
+- [011 — Evolution entry ownership](./011-evolution-entry-ownership.md)
+- [012 — Attendance editing scope](./012-attendance-editing-scope.md)
+- [013 — Initial attendance scheduling and lifecycle](./013-initial-attendance-scheduling-and-lifecycle.md)
+- [014 — Evolution entry versioning](./014-evolution-entry-versioning.md)
+- [015 — Preserve attendance history after association removal](./015-preserve-attendance-history-after-association-removal.md)
+- [016 — Retain associations during professional inactivation](./016-retain-associations-during-professional-inactivation.md)
+- [017 — Scheduling creates a professional association](./017-scheduling-creates-professional-association.md)
+
+## Superseded decisions
+
+- [010 — Patient attendance and evolution records](./010-patient-attendance-and-evolution.md) — superseded by [013](./013-initial-attendance-scheduling-and-lifecycle.md)
