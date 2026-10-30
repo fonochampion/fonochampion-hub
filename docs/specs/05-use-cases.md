@@ -5,7 +5,7 @@
 
 ## Scope
 
-The product is a system for therapy sessions, initially focused on speech-language therapy. The confirmed initial stage covers registration of patients, their responsible persons and contact methods, patient anamnesis, scheduling and maintaining patient attendances, and professionals initially limited to fonoaudiólogos.
+The product is a system for therapy sessions, initially focused on speech-language therapy. The confirmed initial stage covers registration of patients, their responsible persons and contact methods, patient anamnesis, scheduling and maintaining patient attendances, professionals initially limited to fonoaudiólogos, and system-user account management.
 
 The confirmed relationships and patient information are:
 
@@ -18,12 +18,14 @@ Patient > scheduled attendances > one or more participating professionals
 Attendance > one current evolution entry per participating professional
 ```
 
-The patient/responsible-person hierarchy and the attributes listed in the use cases are confirmed. During patient registration, the system user may associate zero or more already registered and active professionals with the patient; professionals may also be added later through the patient record. Each professional may be associated with multiple patients. A patient may be registered without an anamnesis. Anamneses are separate, dated records; creating a new record does not overwrite previous records, and editing a record preserves its earlier versions. An attendance concerns one patient and one or more professionals who are active and associated with the patient by the time scheduling completes. If the patient has no active associated professional, the scheduling flow offers all active professionals; selecting one or more creates the patient-professional association(s) and completes scheduling. Scheduling may be initiated by any system user with scheduling permission; the authorized roles remain to be defined. Removing an association does not delete or alter existing attendance or evolution records, and an already scheduled attendance and its participants remain unchanged. Professional inactivation preserves patient associations but prevents new scheduling involving the inactive professional; reactivation restores the preserved associations automatically. Inactivation does not alter existing attendance participation or prevent the professional from participating and recording/updating their evolution under the normal attendance-status rules. Every attendance has a scheduled date/time, a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes, and actual start/end date/time recorded during realization. Attendance and evolution records are retained permanently. A rescheduled replacement requires a new duration selection. Each participating professional has a separate, optional evolution entry; updates replace its current content, and prior versions are not retained. UC-008 defines the attendance statuses, cancellation and rescheduling, participant maintenance, and late indication. Age representation, CID availability before its planned API integration, kinship values, responsible-person/contact cardinality, requiredness, validation, clinical-data access controls, retention for other data, cancellation-reason configuration, and patient-record lifecycle remain open. Professional council-registration information will be retrieved from a public API in a later stage. Do not infer additional product features such as billing.
+The patient/responsible-person hierarchy and the attributes listed in the use cases are confirmed. During patient registration, the user may associate zero or more already registered and active professionals with the patient; professionals may also be added later through the patient record. Each professional may be associated with multiple patients. A patient may be registered without an anamnesis. Anamneses are separate, dated records; creating a new record does not overwrite previous records, and editing a record preserves its earlier versions. An attendance concerns one patient and one or more professionals who are active and associated with the patient by the time scheduling completes. If the patient has no active associated professional, the scheduling flow offers all active professionals; selecting one or more creates the patient-professional association(s) and completes scheduling. Administrators and Attendants may schedule or reschedule. Removing an association does not delete or alter existing attendance or evolution records, and an already scheduled attendance and its participants remain unchanged. Professional inactivation preserves patient associations but prevents new scheduling involving the inactive professional; reactivation restores the preserved associations automatically. Inactivation does not alter existing attendance participation or prevent the professional from participating and recording/updating their evolution under the normal attendance-status rules. Every attendance has a scheduled date/time, a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes, and actual start/end date/time recorded during realization. Attendance and evolution records are retained permanently. A rescheduled replacement requires a new duration selection. Each participating professional has a separate, optional evolution entry; updates replace its current content, and prior versions are not retained. UC-008 defines the attendance statuses, cancellation and rescheduling, participant maintenance, and late indication. Role-specific access is defined below; detailed privacy, legal/data-handling requirements, and account/authentication details remain open. Age representation, CID availability before its planned API integration, kinship values, responsible-person/contact cardinality, requiredness, validation, retention for other data, remaining cancellation-reason values, and patient-record lifecycle remain open. Professional council-registration information will be retrieved from a public API in a later stage. Do not infer additional product features such as billing.
 
 ## Actors
 
-- **System user:** Performs registration. Specific user roles, authentication, and permissions remain to be defined.
-- **Attending professional:** Participates in an attendance, may start and end it, may cancel it while scheduled, and may record or update only their own evolution entry. Access-control rules for other actions remain to be defined.
+- **Administrador (Administrator):** Has access to all specified system operations, including system-user account management, professional records, and cancellation-reason maintenance. May cancel any `Agendado` attendance, including one they do not participate in, but may start or end an attendance only when participating. Evolution authorship remains restricted to each participating professional's own entry.
+- **Atendente (Attendant):** Maintains patient records and patient-professional associations, responsible persons and their contacts, and attendance scheduling/rescheduling. May add or remove attendance participants under the UC-008 constraints, but may not cancel an attendance. The role has no access to anamnesis or evolution content.
+- **Terapeuta (Therapist):** May access patient clinical records (anamneses, attendances, and evolutions) for all patients. May maintain anamneses. As a participating professional, may start, end, or cancel an attendance when allowed by its status, and may record or update only their own evolution entry. May not schedule attendances or maintain attendance participants.
+- **System-user account:** Has exactly one of the roles `Administrador`, `Atendente`, or `Terapeuta`. Account fields, authentication, access-reset mechanics, and initial Administrator provisioning remain open.
 
 ## Use cases
 
@@ -34,16 +36,17 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 **Main flow:**
 
-1. The system user starts patient registration.
+1. An Attendant or Administrator starts patient registration.
 2. The user provides the patient's full name and age.
 3. The user may select zero or more already registered, active professionals to associate with the patient.
-4. The user may add an anamnesis, including its date of completion and information in the confirmed anamnesis sections.
+4. The Administrator may add an anamnesis, including its date of completion and information in the confirmed anamnesis sections. An Administrator or Therapist may also maintain anamneses through the patient record.
 5. The system creates the patient record, records the selected professional associations, and stores the anamnesis as a dated record when provided.
 
 **Acceptance criteria:**
 
 - A patient record can be created.
 - Full name and age are patient attributes.
+- Administrators and Attendants may create and maintain patient records and patient-professional associations.
 - Associating a professional during patient registration is optional; the patient can be registered with no professional.
 - The user can associate one or more already registered, active professionals during patient registration.
 - A professional can be associated with multiple patients.
@@ -58,7 +61,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 - Anamnesis information may combine structured fields with free-text observations. All fields other than the performance date are optional.
 - Each anamnesis is a separate dated record. Adding a new anamnesis does not overwrite previous records.
 - Editing an existing anamnesis preserves its previous versions and change history.
-- Detailed prompts or value sets within the anamnesis sections, version-history metadata, and access controls for clinical information remain to be defined.
+- Detailed prompts or value sets within the anamnesis sections and version-history metadata remain to be defined. Role-based access is specified under Actors.
 - Whether age is entered directly or derived, and its validation, remain to be defined.
 - CID is a patient attribute. Retrieval through a public API is planned for a later stage; the public API has not been selected.
 - Whether CID can be manually entered or otherwise managed before that integration is available remains to be defined.
@@ -73,7 +76,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 **Main flow:**
 
-1. The system user selects or identifies the patient.
+1. An Attendant or Administrator selects or identifies the patient.
 2. The user provides the responsible person's full name and degree of kinship.
 3. The system records the responsible person associated with that patient.
 
@@ -93,7 +96,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 **Main flow:**
 
-1. The system user selects or identifies the responsible person.
+1. An Attendant or Administrator selects or identifies the responsible person.
 2. The user provides the person's telephone and email contact details.
 3. The system records the contact information associated with that responsible person.
 
@@ -110,7 +113,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 **Main flow:**
 
-1. The system user starts professional registration.
+1. The Administrator starts professional registration.
 2. The user enters the professional's basic data, including CPF.
 3. The user records certification details (description, alphanumeric registration, and completion date); whether certifications may be omitted or multiple certifications may be recorded remains open.
 4. The user records the professional's applicable contact details (telephone and/or email); requiredness and multiplicity remain open.
@@ -133,7 +136,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 **Main flow:**
 
-1. The system user identifies an existing professional.
+1. The Administrator identifies an existing professional.
 2. The user changes the professional's data.
 3. If the CPF is changed, the system ensures it does not duplicate another professional's CPF.
 4. The system saves the changes if the CPF is not duplicated.
@@ -151,7 +154,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 **Main flow:**
 
-1. The system user identifies an existing professional.
+1. The Administrator identifies an existing professional.
 2. The user requests inactivation.
 3. The system marks the professional as inactive.
 
@@ -167,7 +170,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 **Main flow:**
 
-1. The system user identifies a professional and requests deletion.
+1. The Administrator identifies a professional and requests deletion.
 2. The system checks whether any patient is associated with the professional.
 3. If a patient is associated, the system prevents deletion.
 4. If no patient is associated, the system permits deletion.
@@ -186,21 +189,21 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 **Preconditions:**
 
 - The patient exists.
-- For scheduling or rescheduling, the actor has scheduling permission; which roles have this permission remains to be defined.
+- For scheduling or rescheduling, the actor is an Administrator or Attendant.
 
 **Main flow:**
 
-1. A system user with scheduling permission starts or reschedules an attendance for the patient. The user does not have to participate in the attendance.
+1. An Administrator or Attendant starts or reschedules an attendance for the patient. The user does not have to participate in the attendance.
 2. The system offers active, registered professionals already associated with the patient. If no active professional is associated, the system offers all active, registered professionals. The user selects one or more professionals; any selected professional not yet associated is linked to the patient as part of scheduling.
 3. The actor provides the required scheduled date and time and selects a duration from the fixed options of 10, 20, 30, 40, 50, or 60 minutes. If the attendance is recorded without an existing schedule, the system creates its scheduling period at that time.
 4. The system creates the attendance in the `Agendado` status and prevents overlapping with other `Agendado` attendances for any selected professional. Attendances in other statuses do not count as scheduling conflicts.
 5. Any participating professional may start the attendance before or after its scheduled date/time. The system changes its status to `Em andamento` and records the actual start date/time.
-6. After the attendance is saved, additional active, registered professionals already associated with the patient may be added while the attendance is in any status except `Cancelado`.
+6. After the attendance is saved, an Attendant or Administrator may add additional active, registered professionals already associated with the patient while the attendance is in any status except `Cancelado`.
 7. Any participating professional may end the attendance. The system records the actual end date/time and sets its status to `Finalizado` if at least one evolution exists, or `Aguardando Evolução` if none exists.
 8. While the attendance is `Em andamento` or `Aguardando Evolução`, each participating professional may record or update only their own evolution entry. It has separate fields for the therapeutic plan carried out, which is required, and the professional's observations during the attendance, which are optional. Updating replaces the current entry; prior versions are not retained.
 9. If an evolution is added after the attendance has entered `Aguardando Evolução`, the system automatically changes its status to `Finalizado`. A participating professional without an evolution remains individually indicated as pending, even when the attendance is `Finalizado`.
-10. While the attendance is `Agendado`, a participating professional may be removed only if at least one other participant remains and the professional has no evolution recorded.
-11. While the attendance is still `Agendado`, any participating professional may cancel it by selecting a required reason from the cancellation-reason domain. Free-text detail is optional. The patient nonattendance reason may be selected at any time while the attendance is `Agendado`, including before its scheduled date/time.
+10. While the attendance is `Agendado`, an Attendant or Administrator may remove a participating professional only if at least one other participant remains and the professional has no evolution recorded.
+11. While the attendance is still `Agendado`, any participating professional or an Administrator may cancel it by selecting a required reason from the cancellation-reason domain. Free-text detail is optional. The patient nonattendance reason may be selected at any time while the attendance is `Agendado`, including before its scheduled date/time.
 12. If a scheduled attendance needs a new date/time, the system automatically cancels the existing attendance and creates a replacement linked to the cancelled record. It keeps existing active participants and removes any inactive participants. If no active participant remains, the system offers active professionals already associated with the patient; if none are associated, it offers all active professionals and creates a patient-professional association for the selection. The user selects a new duration for the replacement from the fixed options of 10, 20, 30, 40, 50, or 60 minutes. The system assigns the fixed `Remarcação` reason automatically without requiring the user to cancel and recreate the attendance manually.
 13. If the scheduled date/time passes before the attendance starts, its status remains `Agendado`; the system indicates that it is late by comparing the scheduled date/time with the current date/time. This is an on-screen indication, not a status. The professional may still start the attendance.
 
@@ -208,7 +211,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 - The patient nonattendance reason may be selected at any time while the attendance is `Agendado`, including before its scheduled date/time.
 - Every attendance has a scheduled date/time, concerns exactly one patient, and has one or more participating professionals.
-- A system user with scheduling permission may schedule or reschedule the attendance; the user does not have to participate. Which roles have this permission remains to be defined.
+- An Administrator or Attendant may schedule or reschedule the attendance; the user does not have to participate.
 - Each attendance has a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes. The system uses the scheduled date/time and duration to prevent overlapping scheduled attendances for patients and professionals. A replacement created by rescheduling requires a new duration selection.
 - If an attendance is recorded without an existing schedule, the system creates its scheduling period at that time and requires its date/time.
 - Removing a patient-professional association does not delete or alter existing attendance/evolution records. An already scheduled attendance and its participants remain unchanged.
@@ -228,22 +231,45 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 - No additional audit metadata is required beyond the status-change and evolution metadata specified above.
 - The system indicates when a professional's evolution has not yet been recorded. This state can later be updated when an evolution is entered.
 - An evolution summarizes the therapeutic plan carried out and records observations made by the professional during the attendance.
-- Each participating professional may record or update only their own evolution while the attendance is `Em andamento` or `Aguardando Evolução`. Evolution entries cannot be recorded or updated while the attendance is `Agendado`, `Finalizado`, or `Cancelado`. Permissions for other user roles remain to be defined.
+- Each participating professional may record or update only their own evolution while the attendance is `Em andamento` or `Aguardando Evolução`. Evolution entries cannot be recorded or updated while the attendance is `Agendado`, `Finalizado`, or `Cancelado`; this authorship restriction also applies to Administrators.
 - When an evolution is added after status becomes `Aguardando Evolução`, the system changes the status to `Finalizado` automatically. An individual participant with no evolution remains indicated as pending even when the attendance status is `Finalizado`.
 - Updating an evolution replaces its current content; previous versions are not preserved.
 - An evolution entry cannot be deleted.
 - The defined maintenance operations are adding or removing participating professionals and recording or updating evolution entries. No other attendance data may be edited.
-- Additional active, registered professionals already associated with the patient may be added after the attendance is saved while its status is `Agendado`, `Em andamento`, `Aguardando Evolução`, or `Finalizado`. They may not be added when status is `Cancelado`.
-- A participating professional may be removed only while status is `Agendado`, only if at least one other participant remains, and only if the professional has no evolution recorded. Removal is not allowed in other statuses.
-- Only an attendance in `Agendado` may be cancelled; any participating professional may perform the cancellation. A cancellation requires selecting a reason from the cancellation-reason domain; free-text detail is optional. A feature will maintain configurable reasons, including patient nonattendance, and will support creating, listing, editing, and inactivating them. Each configurable reason has a required name, optional description, and active/inactive indicator; names are unique across active and inactive reasons. Configurable reasons cannot be deleted. An inactivated reason is unavailable for new cancellations but remains visible on historical attendances that used it. Editing a reason does not change the original name and description shown in historical attendances. Permissions to maintain reasons and the complete reason values remain to be defined. `Remarcação` is a fixed system reason, is assigned automatically during rescheduling, and is not maintained through that feature.
+- An Attendant or Administrator may add additional active, registered professionals already associated with the patient after the attendance is saved while its status is `Agendado`, `Em andamento`, `Aguardando Evolução`, or `Finalizado`. They may not be added when status is `Cancelado`.
+- An Attendant or Administrator may remove a participating professional only while status is `Agendado`, only if at least one other participant remains, and only if the professional has no evolution recorded. Removal is not allowed in other statuses.
+- Only an attendance in `Agendado` may be cancelled; any participating professional or an Administrator may perform the cancellation. A cancellation requires selecting a reason from the cancellation-reason domain; free-text detail is optional. An Administrator maintains configurable reasons, including patient nonattendance, through create, list, edit, and inactivate operations. Each configurable reason has a required name, optional description, and active/inactive indicator; names are unique across active and inactive reasons. Configurable reasons cannot be deleted. An inactivated reason is unavailable for new cancellations but remains visible on historical attendances that used it. Editing a reason does not change the original name and description shown in historical attendances. The complete configurable reason values remain to be defined. `Remarcação` is a fixed system reason, is assigned automatically during rescheduling, and is not maintained through that feature.
+- An Administrator may start or end an attendance only when participating; the Administrator's non-participant override applies only to cancellation.
 - Rescheduling automatically cancels the existing `Agendado` attendance and creates a replacement linked to the previous record. Existing active participants remain; inactive participants are removed. If none remain, the system offers active professionals already associated with the patient; if none are associated, it offers all active professionals and creates a patient-professional association for the selection. The replacement uses the requested new date/time and a new duration, and the system assigns the fixed `Remarcação` reason automatically.
 - If the scheduled date/time passes before start, the attendance remains `Agendado` and the system displays a late indication based on comparison with current date/time. It is not a separate status, and a professional may still start the attendance.
-- Remaining configurable reason values, permissions to maintain reasons, and which user roles have scheduling permission remain to be defined.
-- Attendance records and evolution entries are retained permanently and cannot be deleted, including records with status `Cancelado`. Attendance/evolution access controls for other roles and privacy requirements remain to be defined.
+- Remaining configurable reason values remain to be defined.
+- Attendance records and evolution entries are retained permanently and cannot be deleted, including records with status `Cancelado`. Role-based access is specified under Actors; other privacy, legal, and data-handling requirements remain to be defined.
+
+### UC-009 — Manage system-user accounts and roles
+
+**Status:** Confirmed; details open
+**Goal:** Manage system-user accounts and assign exactly one initial role to each account.
+
+**Preconditions:**
+
+- An Administrator is authenticated. How the initial Administrator account is provisioned remains open.
+
+**Main flow:**
+
+1. The Administrator creates or edits a system-user account.
+2. The Administrator assigns or changes exactly one role: `Administrador`, `Atendente`, or `Terapeuta`.
+3. The Administrator may activate or inactivate the account, or initiate an access reset.
+
+**Acceptance criteria:**
+
+- Only an Administrator may create or edit system-user accounts, assign or change roles, activate or inactivate accounts, or initiate an access reset.
+- Each account has exactly one of the three defined roles: `Administrador`, `Atendente`, or `Terapeuta`.
+- Account deletion is not specified in the initial scope.
+- Account fields, authentication method, access-reset mechanics, and initial Administrator provisioning remain open.
 
 ## Open questions
 
-- Which user roles may perform these use cases, and what authentication and authorization are required?
+- What authentication method and account/access-reset details are required, and how is the initial Administrator account provisioned?
 - Is age entered directly or derived from another value?
 - Can CID be entered or managed before the planned public API integration?
 - What values are allowed for degree of kinship?
@@ -257,10 +283,10 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 - Are certifications optional, and can a professional have multiple certifications?
 - Are telephone and email mandatory for professionals, and can either have multiple values?
 - Which fields can be changed when modifying a professional? How are certifications and contacts added, changed, or removed?
-- Which roles may view, create, or edit anamnesis records, and what access, privacy, retention, and audit requirements apply?
+- What privacy, legal, retention, and data-handling requirements apply to anamnesis beyond the defined role-based access?
 - What detailed prompts or value sets belong in each anamnesis section, and what metadata is retained for each revision?
 - Does professional deletion remove data permanently or use logical deletion?
 - Which public API will provide professional council-registration information, and what data and integration behavior will it support?
-- Which user roles may view, create, or maintain attendance and evolution records, and what privacy requirements apply?
-- Who may maintain reasons, and what additional reason values are needed beyond patient nonattendance?
-- Which user roles have permission to schedule or reschedule attendances?
+- What privacy, legal, and data-handling requirements apply to attendance and evolution records beyond the defined role-based access?
+- What additional configurable cancellation-reason values are required beyond patient nonattendance?
+- Are system-user accounts deletable, and what account fields and lifecycle constraints apply?
