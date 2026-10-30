@@ -19,5 +19,5 @@ Each professional participating in an attendance may record or update only their
 ## Consequences
 
 - **Benefits:** Evolution entries remain attributable to the participating professional responsible for them.
-- **Costs or risks:** Data privacy, legal requirements, and account/authentication details remain open.
+- **Costs or risks:** Data privacy, legal requirements, and the remaining account/authentication policy details remain open; initial-delivery authentication and provisioning are defined in [ADR-019](./019-first-delivery-authentication-and-user-management.md).
 - **Follow-up actions:** Apply the role permissions in ADR-018 and resolve remaining privacy and authentication requirements before implementation.

@@ -5,7 +5,9 @@
 
 ## Scope
 
-The product is a system for therapy sessions, initially focused on speech-language therapy. The confirmed initial stage covers registration of patients, their responsible persons and contact methods, patient anamnesis, scheduling and maintaining patient attendances, professionals initially limited to fonoaudiólogos, and system-user account management.
+The product is a system for therapy sessions, initially focused on speech-language therapy. The confirmed product scope covers registration of patients, their responsible persons and contact methods, patient anamnesis, scheduling and maintaining patient attendances, professionals initially limited to fonoaudiólogos, and system-user account management.
+
+The first implementation delivery is limited to the application foundation, local username/password authentication, provisioning the initial Administrator through external configuration, and system-user account management using the three fixed roles. Remaining patient, responsible-person, professional, anamnesis, attendance, and evolution capabilities stay in the implementation backlog; this sequencing does not remove them from the confirmed product scope.
 
 The confirmed relationships and patient information are:
 
@@ -18,14 +20,14 @@ Patient > scheduled attendances > one or more participating professionals
 Attendance > one current evolution entry per participating professional
 ```
 
-The patient/responsible-person hierarchy and the attributes listed in the use cases are confirmed. During patient registration, the user may associate zero or more already registered and active professionals with the patient; professionals may also be added later through the patient record. Each professional may be associated with multiple patients. A patient may be registered without an anamnesis. Anamneses are separate, dated records; creating a new record does not overwrite previous records, and editing a record preserves its earlier versions. An attendance concerns one patient and one or more professionals who are active and associated with the patient by the time scheduling completes. If the patient has no active associated professional, the scheduling flow offers all active professionals; selecting one or more creates the patient-professional association(s) and completes scheduling. Administrators and Attendants may schedule or reschedule. Removing an association does not delete or alter existing attendance or evolution records, and an already scheduled attendance and its participants remain unchanged. Professional inactivation preserves patient associations but prevents new scheduling involving the inactive professional; reactivation restores the preserved associations automatically. Inactivation does not alter existing attendance participation or prevent the professional from participating and recording/updating their evolution under the normal attendance-status rules. Every attendance has a scheduled date/time, a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes, and actual start/end date/time recorded during realization. Attendance and evolution records are retained permanently. A rescheduled replacement requires a new duration selection. Each participating professional has a separate, optional evolution entry; updates replace its current content, and prior versions are not retained. UC-008 defines the attendance statuses, cancellation and rescheduling, participant maintenance, and late indication. Role-specific access is defined below; detailed privacy, legal/data-handling requirements, and account/authentication details remain open. Age representation, CID availability before its planned API integration, kinship values, responsible-person/contact cardinality, requiredness, validation, retention for other data, remaining cancellation-reason values, and patient-record lifecycle remain open. Professional council-registration information will be retrieved from a public API in a later stage. Do not infer additional product features such as billing.
+The patient/responsible-person hierarchy and the attributes listed in the use cases are confirmed. During patient registration, the user may associate zero or more already registered and active professionals with the patient; professionals may also be added later through the patient record. Each professional may be associated with multiple patients. A patient may be registered without an anamnesis. Anamneses are separate, dated records; creating a new record does not overwrite previous records, and editing a record preserves its earlier versions. An attendance concerns one patient and one or more professionals who are active and associated with the patient by the time scheduling completes. If the patient has no active associated professional, the scheduling flow offers all active professionals; selecting one or more creates the patient-professional association(s) and completes scheduling. Administrators and Attendants may schedule or reschedule. Removing an association does not delete or alter existing attendance or evolution records, and an already scheduled attendance and its participants remain unchanged. Professional inactivation preserves patient associations but prevents new scheduling involving the inactive professional; reactivation restores the preserved associations automatically. Inactivation does not alter existing attendance participation or prevent the professional from participating and recording/updating their evolution under the normal attendance-status rules. Every attendance has a scheduled date/time, a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes, and actual start/end date/time recorded during realization. Attendance and evolution records are retained permanently. A rescheduled replacement requires a new duration selection. Each participating professional has a separate, optional evolution entry; updates replace its current content, and prior versions are not retained. UC-008 defines the attendance statuses, cancellation and rescheduling, participant maintenance, and late indication. Role-specific access is defined below; detailed privacy, legal/data-handling requirements, account-field rules, username normalization, and password policy remain open. Age representation, CID availability before its planned API integration, kinship values, responsible-person/contact cardinality, requiredness, validation, retention for other data, remaining cancellation-reason values, and patient-record lifecycle remain open. Professional council-registration information will be retrieved from a public API in a later stage. Do not infer additional product features such as billing.
 
 ## Actors
 
 - **Administrador (Administrator):** Has access to all specified system operations, including system-user account management, professional records, and cancellation-reason maintenance. May cancel any `Agendado` attendance, including one they do not participate in, but may start or end an attendance only when participating. Evolution authorship remains restricted to each participating professional's own entry.
 - **Atendente (Attendant):** Maintains patient records and patient-professional associations, responsible persons and their contacts, and attendance scheduling/rescheduling. May add or remove attendance participants under the UC-008 constraints, but may not cancel an attendance. The role has no access to anamnesis or evolution content.
 - **Terapeuta (Therapist):** May access patient clinical records (anamneses, attendances, and evolutions) for all patients. May maintain anamneses. As a participating professional, may start, end, or cancel an attendance when allowed by its status, and may record or update only their own evolution entry. May not schedule attendances or maintain attendance participants.
-- **System-user account:** Has exactly one of the roles `Administrador`, `Atendente`, or `Terapeuta`. Account fields, authentication, access-reset mechanics, and initial Administrator provisioning remain open.
+- **System-user account:** Has exactly one fixed role: `Administrador`, `Atendente`, or `Terapeuta`. The account has a username, display name, and email attribute; email is not the authentication identifier. Authentication uses a local username that uniquely identifies the account and a password. Account field requiredness and validation, username normalization, and password policy remain open.
 
 ## Use cases
 
@@ -252,24 +254,34 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 **Preconditions:**
 
-- An Administrator is authenticated. How the initial Administrator account is provisioned remains open.
+- An Administrator is authenticated. The initial Administrator is provisioned from configuration supplied outside the source code and must change the configured password at first login.
 
 **Main flow:**
 
 1. The Administrator creates or edits a system-user account.
 2. The Administrator assigns or changes exactly one role: `Administrador`, `Atendente`, or `Terapeuta`.
-3. The Administrator may activate or inactivate the account, or initiate an access reset.
+3. When creating an account, the system generates a temporary password, displays it once, and requires the new user to change it at first login.
+4. The Administrator may activate or inactivate the account. Password reset/recovery is not part of the first implementation delivery.
 
 **Acceptance criteria:**
 
 - Only an Administrator may create or edit system-user accounts, assign or change roles, activate or inactivate accounts, or initiate an access reset.
 - Each account has exactly one of the three defined roles: `Administrador`, `Atendente`, or `Terapeuta`.
+- An inactivated account cannot authenticate.
+- Authentication is local and uses username and password; email is an account attribute and is not used to authenticate.
+- The initial Administrator is provisioned through configuration supplied outside the source code and must change the configured password at first login.
+- For an account created by an Administrator, a system-generated temporary password is displayed only once and must be changed at first login.
+- The three roles are fixed for the first implementation delivery; creating or editing role definitions and permissions is not included.
+- Password reset/recovery is deferred from the first implementation delivery.
 - Account deletion is not specified in the initial scope.
-- Account fields, authentication method, access-reset mechanics, and initial Administrator provisioning remain open.
+- Account field requiredness and validation, username normalization, password policy, the detailed bootstrap lifecycle, access-reset mechanics, and account deletion remain open.
 
 ## Open questions
 
-- What authentication method and account/access-reset details are required, and how is the initial Administrator account provisioned?
+- What requiredness and validation rules apply to the display name and email account attributes?
+- How are usernames normalized, and what password policy applies to user-set and temporary passwords?
+- What detailed bootstrap lifecycle applies if the externally configured initial Administrator already exists or its configuration changes?
+- What access-reset/recovery mechanics and account-deletion behavior should be specified for a later delivery?
 - Is age entered directly or derived from another value?
 - Can CID be entered or managed before the planned public API integration?
 - What values are allowed for degree of kinship?
@@ -289,4 +301,3 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 - Which public API will provide professional council-registration information, and what data and integration behavior will it support?
 - What privacy, legal, and data-handling requirements apply to attendance and evolution records beyond the defined role-based access?
 - What additional configurable cancellation-reason values are required beyond patient nonattendance?
-- Are system-user accounts deletable, and what account fields and lifecycle constraints apply?

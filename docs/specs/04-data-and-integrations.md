@@ -10,7 +10,7 @@
 - **Appointment duration:** Each attendance has a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes. The duration is used with the scheduled date/time to prevent overlaps. A replacement created by rescheduling requires a new duration selection.
 - **Professional CPF:** CPF defines professional uniqueness. A professional CPF must not duplicate another professional's CPF. Whether CPF is mandatory and how it is formatted/validated remain open.
 - **Data sources and ownership:** To be defined
-- **Personal or sensitive data:** Patient and responsible-person records include names, age, CID, kinship, telephone, and email. Anamnesis and attendance evolution contain patient health and clinical information. Professional records include basic personal data, CPF, certification details, and contact information. System-user accounts contain account and role information; fields remain to be defined. Applicable handling requirements and classification remain to be defined.
+- **Personal or sensitive data:** Patient and responsible-person records include names, age, CID, kinship, telephone, and email. Anamnesis and attendance evolution contain patient health and clinical information. Professional records include basic personal data, CPF, certification details, and contact information. System-user accounts include username, display name, email attribute, credential, role, and active state. Email is not used for authentication. Temporary passwords for accounts created by an Administrator are shown once and must be changed at first login; the initial Administrator is provisioned from external configuration and must change that password at first login. Password reset/recovery is deferred from the first implementation delivery. Applicable handling requirements and classification remain to be defined.
 - **Retention, deletion, and export:** Attendance records and evolution entries are retained permanently and cannot be deleted. Retention and deletion rules for other data, including anamneses, remain to be defined.
 
 ## External integrations
@@ -23,7 +23,7 @@
 ## Privacy and security
 
 - **Consent and legal basis:** To be defined
-- **Access controls:** Initial roles and their feature permissions are defined in UC-009. Authentication, account fields, access-reset mechanics, and initial Administrator provisioning remain open.
+- **Access controls:** Initial roles and their feature permissions are defined in UC-009. Initial authentication is local using username and password. Account field requiredness and validation, username normalization, password policy, detailed bootstrap lifecycle, and access-reset mechanics remain open.
 - **Regulatory requirements:** To be defined
 
 ## Assumptions and open questions
@@ -32,7 +32,7 @@
 - Define contact requiredness, multiplicity, and validation for telephone and email.
 - Select and assess the public CID API before implementing that later-stage integration; no provider has been selected.
 - Define duplicate handling, record updates, and deletion or archival behavior.
-- Role permissions are defined in UC-009. Define authentication, account fields, access-reset mechanics, initial Administrator provisioning, consent/legal basis, data protection requirements, and retention.
+- Role permissions are defined in UC-009. The first implementation delivery uses local username/password authentication, three fixed roles, an externally configured initial Administrator, and one-time temporary passwords with forced change at first login. Define account field requiredness and validation, username normalization, password policy, detailed bootstrap lifecycle, access-reset mechanics, consent/legal basis, data protection requirements, and retention.
 - Appointment scheduling is included in the current scope. Administrators and Attendants may schedule or reschedule. If the patient has no active associated professional, the scheduling flow offers all active professionals and creates associations for the selection. Each attendance has a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes and used with its scheduled date/time to prevent overlaps. A professional's existing `Agendado` attendances prevent overlap; other attendance statuses do not count as scheduling conflicts. Overlapping attendances for the same patient are prevented.
 - Define professional basic-data fields and CPF requiredness and validation.
 - Define certification and professional-contact requiredness, multiplicity, and validation.
@@ -41,6 +41,6 @@
 - Define detailed anamnesis prompts or value sets and which metadata is retained for revisions.
 - Attendance and evolution records are retained permanently and cannot be deleted. Administrators and Therapists may access clinical attendance/evolution data for all patients; only participating professionals may update their own evolution. Administrators may cancel any `Agendado` attendance; Therapists may cancel only as participants, and Attendants cannot cancel. Define remaining privacy and handling requirements.
 - Administrators maintain configurable cancellation reasons. Define the remaining configurable values. Configurable reasons have a required unique name (unique across active and inactive records), an optional description, and an active/inactive indicator; they support create, list, edit, and inactivate operations and cannot be deleted. An inactivated reason is unavailable for new cancellations but remains on historical attendances, and editing a reason does not alter the original name and description shown in historical attendances. `Remarcação` is a fixed system reason assigned automatically during rescheduling.
-- Administrators create/edit user accounts, assign or change exactly one role, activate/inactivate accounts, and initiate access resets. Account fields, authentication method, reset mechanics, initial Administrator provisioning, and deletion remain to be defined.
+- Administrators create/edit user accounts, assign or change exactly one of the three fixed roles, and activate/inactivate accounts. Local authentication uses username and password; email is not the login identifier. Newly created accounts receive a system-generated temporary password displayed once and must change it at first login. The initial Administrator is provisioned from external configuration and must change the configured password at first login. Reset/recovery and account deletion are outside the first implementation delivery; account field requiredness and validation, username normalization, password policy, bootstrap lifecycle, reset mechanics, and deletion remain to be defined.
 - Define professional deletion semantics.
 - Select and assess a public professional-council API before implementing that later-stage integration; no provider has been selected.
