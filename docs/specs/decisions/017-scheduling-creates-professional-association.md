@@ -14,7 +14,7 @@ The attendance lifecycle requires one or more active professionals associated wi
 
 ## Decision
 
-- Any system user with scheduling permission may schedule or reschedule; which roles receive this permission remains open.
+- Administrators and Attendants may schedule or reschedule. The remaining role permissions are specified in ADR-018.
 - If active professionals are already associated with the patient, the scheduling flow offers those professionals for selection.
 - If the patient has no active associated professional, the flow offers all active, registered professionals. Selecting one or more creates the patient-professional associations and completes scheduling.
 - When rescheduling, retain existing active participants and remove inactive participants from the replacement. If no active participant remains, offer active professionals already associated with the patient; if none are actively associated, offer all active professionals and create associations for the selection.
@@ -24,5 +24,5 @@ This decision supersedes ADR-008's former restriction that an attendance flow ca
 ## Consequences
 
 - **Benefits:** A patient with no active professional association can still be scheduled without leaving the scheduling flow.
-- **Costs or risks:** Which user roles may schedule remains open and must be specified before authorization is implemented.
-- **Follow-up actions:** Define the roles authorized to schedule and apply the scheduling flow rules in UC-008.
+- **Costs or risks:** Authentication and account provisioning remain open and must be specified before authorization is implemented.
+- **Follow-up actions:** Apply the role permissions in ADR-018 and the scheduling flow rules in UC-008.

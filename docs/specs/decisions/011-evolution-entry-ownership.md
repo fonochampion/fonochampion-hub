@@ -14,10 +14,10 @@ Each participating professional has a separate evolution entry for an attendance
 
 ## Decision
 
-Each professional participating in an attendance may record or update only their own evolution entry. Permissions for other user roles remain to be defined.
+Each professional participating in an attendance may record or update only their own evolution entry. Administrators may access clinical data but cannot change another professional's evolution; other role access is specified in ADR-018.
 
 ## Consequences
 
 - **Benefits:** Evolution entries remain attributable to the participating professional responsible for them.
-- **Costs or risks:** Permissions for viewing and for other user roles still need to be defined.
-- **Follow-up actions:** Define the remaining attendance and evolution access-control rules before implementation.
+- **Costs or risks:** Data privacy, legal requirements, and the remaining account/authentication policy details remain open; initial-delivery authentication and provisioning are defined in [ADR-019](./019-first-delivery-authentication-and-user-management.md).
+- **Follow-up actions:** Apply the role permissions in ADR-018 and resolve remaining privacy and authentication requirements before implementation.

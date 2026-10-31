@@ -82,7 +82,7 @@ The project responsibilities and compile-time dependency direction are:
 
 ## Security and operations
 
-- **Authentication and authorization:** To be defined
+- **Authentication and authorization:** The first delivery uses local username/password authentication and the fixed initial roles defined in [05 — Use Cases](./05-use-cases.md). Implementation-level session, credential-policy, and bootstrap-lifecycle details remain to be defined.
 - **Secret management:** To be defined
 - **Environments and deployment:** To be defined
 - **Monitoring and recovery:** To be defined
