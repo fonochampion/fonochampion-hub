@@ -1,7 +1,7 @@
 # Data and Integrations
 
 **Status:** Draft
-**Last reviewed:** 2026-10-30
+**Last reviewed:** 2026-10-31
 
 ## Data
 
@@ -23,7 +23,7 @@
 ## Privacy and security
 
 - **Consent and legal basis:** To be defined
-- **Access controls:** Initial roles and their feature permissions are defined in UC-009. Initial authentication is local using username and password. Account field requiredness and validation, username normalization, password policy, detailed bootstrap lifecycle, and access-reset mechanics remain open.
+- **Access controls:** Initial roles and their feature permissions are defined in UC-009. Initial authentication is local using username and password, with the confirmed username, password, session, failed-login, bootstrap, and account-field policies in UC-009 and ADR-022/ADR-023/ADR-024. Access-reset mechanics remain open.
 - **Regulatory requirements:** To be defined
 
 ## Assumptions and open questions
@@ -32,7 +32,7 @@
 - Define contact requiredness, multiplicity, and validation for telephone and email.
 - Select and assess the public CID API before implementing that later-stage integration; no provider has been selected.
 - Define duplicate handling, record updates, and deletion or archival behavior.
-- Role permissions are defined in UC-009. The first implementation delivery uses local username/password authentication, three fixed roles, an externally configured initial Administrator, and one-time temporary passwords with forced change at first login. Define account field requiredness and validation, username normalization, password policy, detailed bootstrap lifecycle, access-reset mechanics, consent/legal basis, data protection requirements, and retention.
+- Role permissions and the initial username/password, session, failed-login, first-login password-change, Administrator bootstrap, and account-field policies are defined in UC-009 and ADR-022/ADR-023/ADR-024. The first implementation delivery uses three fixed roles, an externally configured initial Administrator, and one-time temporary passwords with forced change at first login. Define access-reset mechanics, consent/legal basis, data-protection requirements, and retention.
 - Appointment scheduling is included in the current scope. Administrators and Attendants may schedule or reschedule. If the patient has no active associated professional, the scheduling flow offers all active professionals and creates associations for the selection. Each attendance has a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes and used with its scheduled date/time to prevent overlaps. A professional's existing `Agendado` attendances prevent overlap; other attendance statuses do not count as scheduling conflicts. Overlapping attendances for the same patient are prevented.
 - Define professional basic-data fields and CPF requiredness and validation.
 - Define certification and professional-contact requiredness, multiplicity, and validation.
@@ -41,6 +41,6 @@
 - Define detailed anamnesis prompts or value sets and which metadata is retained for revisions.
 - Attendance and evolution records are retained permanently and cannot be deleted. Administrators and Therapists may access clinical attendance/evolution data for all patients; only participating professionals may update their own evolution. Administrators may cancel any `Agendado` attendance; Therapists may cancel only as participants, and Attendants cannot cancel. Define remaining privacy and handling requirements.
 - Administrators maintain configurable cancellation reasons. Define the remaining configurable values. Configurable reasons have a required unique name (unique across active and inactive records), an optional description, and an active/inactive indicator; they support create, list, edit, and inactivate operations and cannot be deleted. An inactivated reason is unavailable for new cancellations but remains on historical attendances, and editing a reason does not alter the original name and description shown in historical attendances. `Remarcação` is a fixed system reason assigned automatically during rescheduling.
-- Administrators create/edit user accounts, assign or change exactly one of the three fixed roles, and activate/inactivate accounts. Local authentication uses username and password; email is not the login identifier. Newly created accounts receive a system-generated temporary password displayed once and must change it at first login. The initial Administrator is provisioned from external configuration and must change the configured password at first login. Reset/recovery and account deletion are outside the first implementation delivery; account field requiredness and validation, username normalization, password policy, bootstrap lifecycle, reset mechanics, and deletion remain to be defined.
+- Administrators create/edit user accounts, assign or change exactly one of the three fixed roles, and activate/inactivate accounts. Local authentication uses username and password; email is not the login identifier. Newly created accounts receive a system-generated temporary password displayed once and must change it at first login. The initial Administrator is provisioned from external configuration and must change the configured password at first login. Reset/recovery and account deletion are outside the first implementation delivery; reset mechanics and deletion remain to be defined.
 - Define professional deletion semantics.
 - Select and assess a public professional-council API before implementing that later-stage integration; no provider has been selected.

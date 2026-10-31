@@ -1,7 +1,7 @@
 # Implementation Roadmap
 
 **Status:** Working roadmap
-**Last reviewed:** 2026-10-30
+**Last reviewed:** 2026-10-31
 
 This is the master, hierarchical list of approved implementation work. The specifications in this directory remain the source of truth for scope and behavior; this roadmap tracks implementation status and sequence. Its order reflects dependencies, not priority or a commitment to implement every item in one delivery.
 
@@ -24,13 +24,7 @@ When a new feature or approved scope change is specified, add its implementation
 
 Readiness is separate from status: keep the existing status values and mark an item ready only when its scope is sufficiently specified, all listed dependencies are `DONE`, and all relevant decision gates are resolved. Prioritize ready items with no dependencies before ready items whose dependencies are complete. Keep blocked items visible with the exact dependency or open decision that prevents implementation.
 
-At this review, the only item with no listed dependencies and no unresolved decision gate is:
-
-| Priority | ID | Implementation item | Depends on | Status |
-|---|---|---|---|---|
-| 1 | IMP-001 | Create the .NET solution and confirmed `src/Web`, `src/Application`, `src/Domain`, and `src/Infrastructure` project structure. | — | PENDING |
-
-This is a readiness classification, not authorization to start implementation. The setup-phase restriction in `AGENTS.md` remains in force until explicitly changed. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
+IMP-001, IMP-002, IMP-003, IMP-004, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
 
 ## Phase 0 — Resolve specification gates
 
@@ -51,20 +45,21 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | DG-011 | RESOLVED — fixed duration options are 10, 20, 30, 40, 50, or 60 minutes per attendance; rescheduling requires a new selection | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-013](./decisions/013-initial-attendance-scheduling-and-lifecycle.md) |
 | DG-012 | PARTIALLY RESOLVED — Administrators maintain configurable cancellation reasons; remaining reason values are open (excluding fixed `Remarcação`) | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-018](./decisions/018-initial-user-roles-and-permissions.md) |
 | DG-013 | RESOLVED — rescheduling removes inactive participants; if none remain, select active associated professionals or create associations from the active registry | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-017](./decisions/017-scheduling-creates-professional-association.md) |
-| DG-014 | Account-field requiredness and validation, username normalization, password policy, and detailed bootstrap lifecycle | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles), [ADR-019](./decisions/019-first-delivery-authentication-and-user-management.md) |
+| DG-014 | RESOLVED — display name is required, trimmed, and nonempty after trimming; email is optional, trimmed, and format-validated when provided, with no uniqueness or ownership verification | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles), [ADR-024](./decisions/024-system-user-account-field-rules.md) |
 | DG-015 | Password reset/recovery behavior and security requirements for its later delivery | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles) |
+| DG-016 | RESOLVED — matching existing Administrator accounts are left unchanged; account conflicts and a configured username that differs from an existing Administrator fail startup without creating or changing an account | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles), [ADR-023](./decisions/023-initial-administrator-bootstrap-lifecycle.md) |
 
 ## Phase 1 — First delivery: foundation and access management
 
 | ID | Implementation item | Depends on | Status |
 |---|---|---|---|
-| IMP-001 | Create the .NET solution and confirmed `src/Web`, `src/Application`, `src/Domain`, and `src/Infrastructure` project structure. | — | PENDING |
-| IMP-002 | Configure ASP.NET Core MVC, Entity Framework Core, Npgsql, and PostgreSQL persistence in the confirmed modular-monolith structure. | IMP-001 | PENDING |
-| IMP-003 | Add the root `Dockerfile` and `docker-compose.yml` for local ASP.NET Core and PostgreSQL execution. | IMP-001, IMP-002 | PENDING |
-| IMP-004 | Build the shared Bootstrap 5 responsive shell: header, collapsible navigation, content area, footer, and confirmed color system. | IMP-001 | PENDING |
-| IMP-021 | Implement local username/password authentication, authenticated sessions, and the required first-login password change flow. | IMP-002; DG-014 | BLOCKED |
-| IMP-022 | Provision the initial Administrator from configuration supplied outside the source code and require a password change at first login. | IMP-021; DG-014 | BLOCKED |
-| IMP-020 | Manage system-user accounts: create/edit accounts with username, display name, and email attribute; assign one of the three fixed roles; activate/inactivate accounts; generate a temporary password shown once; and require its change at first login. Password reset/recovery and role-definition management are excluded from this delivery. | IMP-022; DG-014 | BLOCKED |
+| IMP-001 | Create the .NET solution and confirmed `src/Web`, `src/Application`, `src/Domain`, and `src/Infrastructure` project structure. | — | DONE |
+| IMP-002 | Configure ASP.NET Core MVC, Entity Framework Core, Npgsql, and PostgreSQL persistence in the confirmed modular-monolith structure. | IMP-001 | DONE |
+| IMP-003 | Add the root `Dockerfile` and `docker-compose.yml` for local ASP.NET Core and PostgreSQL execution using the confirmed ports, local environment-variable names, persistent volume, database healthcheck, and startup migrations. | IMP-001, IMP-002 | DONE |
+| IMP-004 | Build the shared Bootstrap 5 responsive shell: header, collapsible navigation, content area, footer, and confirmed color system. | IMP-001 | DONE |
+| IMP-021 | Implement local username/password authentication, authenticated sessions, and the required first-login password change flow using the confirmed username, password, session, and failed-login policies. | IMP-002 | DONE |
+| IMP-022 | Provision the initial Administrator from configuration supplied outside the source code and require a password change at first login. | IMP-021 | DONE |
+| IMP-020 | Manage system-user accounts: create/edit accounts with username, display name, and email attribute; assign one of the three fixed roles; activate/inactivate accounts; generate a temporary password shown once; and require its change at first login. Password reset/recovery and role-definition management are excluded from this delivery. | IMP-022 | DONE |
 
 ## Phase 2 — Business backlog: patient and responsible-person features
 
