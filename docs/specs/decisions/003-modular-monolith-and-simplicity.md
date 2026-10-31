@@ -17,6 +17,7 @@ The application is expected to have low volume of access and transactions. The r
 Apply these principles:
 
 - Favor simplicity, low operational cost, easy maintenance, responsiveness, and future evolvability.
+- Apply clean-code practices by favoring readable, cohesive, maintainable code and avoiding unnecessary duplication or complexity.
 - Use a modular monolith.
 - Do not use microservices, Kubernetes, messaging infrastructure, or distributed cache.
 - Do not introduce components unnecessary for the confirmed low volume of access and transactions.

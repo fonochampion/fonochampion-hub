@@ -1,7 +1,7 @@
 # Implementation Roadmap
 
 **Status:** Working roadmap
-**Last reviewed:** 2026-10-30
+**Last reviewed:** 2026-10-31
 
 This is the master, hierarchical list of approved implementation work. The specifications in this directory remain the source of truth for scope and behavior; this roadmap tracks implementation status and sequence. Its order reflects dependencies, not priority or a commitment to implement every item in one delivery.
 
@@ -24,13 +24,13 @@ When a new feature or approved scope change is specified, add its implementation
 
 Readiness is separate from status: keep the existing status values and mark an item ready only when its scope is sufficiently specified, all listed dependencies are `DONE`, and all relevant decision gates are resolved. Prioritize ready items with no dependencies before ready items whose dependencies are complete. Keep blocked items visible with the exact dependency or open decision that prevents implementation.
 
-At this review, the only item with no listed dependencies and no unresolved decision gate is:
+IMP-001, IMP-002, and IMP-004 are complete. IMP-003 is the next ready item, with local-only settings defined in [02 — Architecture](./02-architecture.md#local-development-environment) and [ADR-021](./decisions/021-docker-local-development-configuration.md). Production hosting and deployment remain out of scope.
 
 | Priority | ID | Implementation item | Depends on | Status |
 |---|---|---|---|---|
-| 1 | IMP-001 | Create the .NET solution and confirmed `src/Web`, `src/Application`, `src/Domain`, and `src/Infrastructure` project structure. | — | PENDING |
+| 1 | IMP-003 | Add the root `Dockerfile` and `docker-compose.yml` for local ASP.NET Core and PostgreSQL execution using the confirmed local configuration. | IMP-001, IMP-002 | PENDING |
 
-This is a readiness classification, not authorization to start implementation. The setup-phase restriction in `AGENTS.md` remains in force until explicitly changed. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
+This is a readiness classification, not authorization to start implementation. Implement only roadmap items explicitly selected by the requester. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
 
 ## Phase 0 — Resolve specification gates
 
@@ -58,10 +58,10 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 
 | ID | Implementation item | Depends on | Status |
 |---|---|---|---|
-| IMP-001 | Create the .NET solution and confirmed `src/Web`, `src/Application`, `src/Domain`, and `src/Infrastructure` project structure. | — | PENDING |
-| IMP-002 | Configure ASP.NET Core MVC, Entity Framework Core, Npgsql, and PostgreSQL persistence in the confirmed modular-monolith structure. | IMP-001 | PENDING |
-| IMP-003 | Add the root `Dockerfile` and `docker-compose.yml` for local ASP.NET Core and PostgreSQL execution. | IMP-001, IMP-002 | PENDING |
-| IMP-004 | Build the shared Bootstrap 5 responsive shell: header, collapsible navigation, content area, footer, and confirmed color system. | IMP-001 | PENDING |
+| IMP-001 | Create the .NET solution and confirmed `src/Web`, `src/Application`, `src/Domain`, and `src/Infrastructure` project structure. | — | DONE |
+| IMP-002 | Configure ASP.NET Core MVC, Entity Framework Core, Npgsql, and PostgreSQL persistence in the confirmed modular-monolith structure. | IMP-001 | DONE |
+| IMP-003 | Add the root `Dockerfile` and `docker-compose.yml` for local ASP.NET Core and PostgreSQL execution using the confirmed ports, local environment-variable names, persistent volume, database healthcheck, and startup migrations. | IMP-001, IMP-002 | PENDING |
+| IMP-004 | Build the shared Bootstrap 5 responsive shell: header, collapsible navigation, content area, footer, and confirmed color system. | IMP-001 | DONE |
 | IMP-021 | Implement local username/password authentication, authenticated sessions, and the required first-login password change flow. | IMP-002; DG-014 | BLOCKED |
 | IMP-022 | Provision the initial Administrator from configuration supplied outside the source code and require a password change at first login. | IMP-021; DG-014 | BLOCKED |
 | IMP-020 | Manage system-user accounts: create/edit accounts with username, display name, and email attribute; assign one of the three fixed roles; activate/inactivate accounts; generate a temporary password shown once; and require its change at first login. Password reset/recovery and role-definition management are excluded from this delivery. | IMP-022; DG-014 | BLOCKED |
