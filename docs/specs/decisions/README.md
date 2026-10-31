@@ -26,6 +26,9 @@ Start with [000-template.md](./000-template.md). When recording a decision, incl
 - [019 — First delivery authentication and user management](./019-first-delivery-authentication-and-user-management.md)
 - [020 — Project responsibilities and dependencies](./020-project-responsibilities-and-dependencies.md)
 - [021 — Docker local development configuration](./021-docker-local-development-configuration.md)
+- [022 — Initial authentication policy](./022-initial-authentication-policy.md)
+- [023 — Initial Administrator bootstrap lifecycle](./023-initial-administrator-bootstrap-lifecycle.md)
+- [024 — System-user account field rules](./024-system-user-account-field-rules.md)
 
 ## Superseded decisions
 

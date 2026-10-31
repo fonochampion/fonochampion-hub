@@ -1,7 +1,7 @@
 # Product Brief
 
 **Status:** Draft
-**Last reviewed:** 2026-10-30
+**Last reviewed:** 2026-10-31
 
 ## Context
 
@@ -31,5 +31,5 @@
 
 ## Assumptions and open questions
 
-- **Assumptions to validate:** Patient age representation, CID behavior before its future public API integration, professional basic-data fields, and remaining validation/cardinality rules remain open. Anamnesis section details, revision metadata, privacy, and retention remain open; role access is defined in UC-009. Attendance/evolution privacy and legal/data-handling requirements and remaining cancellation-reason values remain open. Attendance/evolution records are retained permanently; specified audit metadata and the fixed per-attendance duration options are defined. Association removal and professional inactivation preserve existing attendance participation as specified in UC-008. Attendance scheduling is included in the initial product scope; scheduled date/time are required, and actual start/end times are recorded when the professional changes the attendance state. Professional registration is initially limited to fonoaudiólogos; support for other professions may be considered later. Account field requiredness and validation, username normalization, password policy, reset mechanics, and account deletion remain open.
+- **Assumptions to validate:** Patient age representation, CID behavior before its future public API integration, professional basic-data fields, and remaining validation/cardinality rules remain open. Anamnesis section details, revision metadata, privacy, and retention remain open; role access is defined in UC-009. Attendance/evolution privacy and legal/data-handling requirements and remaining cancellation-reason values remain open. Attendance/evolution records are retained permanently; specified audit metadata and the fixed per-attendance duration options are defined. Association removal and professional inactivation preserve existing attendance participation as specified in UC-008. Attendance scheduling is included in the initial product scope; scheduled date/time are required, and actual start/end times are recorded when the professional changes the attendance state. Professional registration is initially limited to fonoaudiólogos; support for other professions may be considered later. Password reset mechanics and account deletion remain open; initial username/password, account-field, session, failed-login, and bootstrap policies are defined in UC-009 and ADR-022/ADR-023/ADR-024.
 - **Outstanding questions:** Product name, success measures, detailed first-release scope beyond the initial registration stage, and how the product currently addresses the problem.

@@ -1,0 +1,168 @@
+:root {
+  color-scheme: light;
+  --brand-50: #F6F2FF;
+  --brand-100: #EEE7FF;
+  --brand-200: #DDD0FF;
+  --brand-300: #C4AEFF;
+  --brand-400: #A587FF;
+  --brand-500: #7857E8;
+  --brand-600: #6544D0;
+  --brand-700: #5335B2;
+  --brand-800: #422A8F;
+  --brand-900: #34206F;
+  --accent-50: #FBF9FF;
+  --accent-100: #F4F0FF;
+  --accent-200: #ECE4FF;
+  --accent-300: #DDD0FF;
+  --accent-400: #CAB5FF;
+  --surface: #FFFFFF;
+  --surface-alt: #FAFAFC;
+  --surface-soft: #F7F7F9;
+  --border-light: #F0F0F4;
+  --border-default: #E5E7EB;
+  --border-strong: #D5D8E0;
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-disabled: #C7CDD7;
+  --success-50: #ECFDF5;
+  --success-100: #DDF8EE;
+  --success-500: #3DBE8B;
+  --success-600: #2FA472;
+  --warning-50: #FFF5EC;
+  --warning-100: #FFE7D3;
+  --warning-500: #FF9A57;
+  --warning-600: #F07C2E;
+  --danger-50: #FFF0F0;
+  --danger-100: #FFD8D8;
+  --danger-500: #F56C6C;
+  --danger-600: #E54848;
+  --info-50: #EEF7FF;
+  --info-100: #D8ECFF;
+  --info-500: #4D9EFF;
+  --info-600: #2D7FF0;
+  --background: #F8F9FB;
+  --primary: #7857E8;
+  --primary-hover: #6544D0;
+  --success: #3DBE8B;
+  --warning: #FF9A57;
+  --danger: #F56C6C;
+  --info: #4D9EFF;
+  --bs-body-bg: var(--background);
+  --bs-body-color: var(--text-primary);
+  --bs-border-color: var(--border-default);
+  --bs-secondary-color: var(--text-secondary);
+  --bs-link-color: var(--brand-700);
+  --bs-link-hover-color: var(--brand-800);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-bs-theme="light"]) {
+    color-scheme: dark;
+    --surface: #1F2937;
+    --background: #111827;
+    --primary: #A587FF;
+    --primary-hover: #C4AEFF;
+    --text-primary: #F9FAFB;
+    --text-secondary: #D1D5DB;
+    --surface-alt: #1F2937;
+    --surface-soft: #374151;
+    --border-light: #374151;
+    --border-default: #374151;
+    --border-strong: #4B5563;
+    --text-muted: #9CA3AF;
+    --text-disabled: #6B7280;
+    --success: #52C79B;
+    --warning: #FFB074;
+    --danger: #FF8B8B;
+    --info: #74B6FF;
+    --bs-border-color: #374151;
+    --bs-link-color: #C4AEFF;
+    --bs-link-hover-color: #DDD0FF;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+a {
+  color: var(--bs-link-color);
+}
+
+a:hover {
+  color: var(--bs-link-hover-color);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.app-navbar {
+  background-color: var(--brand-800);
+}
+
+.app-navbar .navbar-brand,
+.app-navbar .nav-link {
+  color: #FFFFFF;
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus-visible {
+  color: var(--brand-100);
+}
+
+.app-navbar .navbar-toggler {
+  border-color: rgb(255 255 255 / 55%);
+}
+
+.app-content {
+  flex: 1;
+  padding-block: 2rem;
+}
+
+.page-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 600;
+}
+
+.app-footer {
+  padding-block: 1rem;
+  border-top: 1px solid var(--border-default);
+  background-color: var(--surface);
+  color: var(--text-secondary);
+}
+
+.btn-primary {
+  --bs-btn-color: #FFFFFF;
+  --bs-btn-bg: var(--brand-600);
+  --bs-btn-border-color: var(--brand-600);
+  --bs-btn-hover-color: #FFFFFF;
+  --bs-btn-hover-bg: var(--brand-700);
+  --bs-btn-hover-border-color: var(--brand-700);
+  --bs-btn-active-bg: var(--brand-800);
+  --bs-btn-active-border-color: var(--brand-800);
+  --bs-btn-disabled-bg: var(--brand-300);
+  --bs-btn-disabled-border-color: var(--brand-300);
+}

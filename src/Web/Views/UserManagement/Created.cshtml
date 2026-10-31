@@ -1,0 +1,16 @@
+@model CreatedAccountViewModel
+@{
+    ViewData["Title"] = "Conta criada";
+}
+
+<h1 class="h2 mb-4">Conta criada</h1>
+<p>Guarde a senha temporária agora. Ela será exibida somente nesta tela e deverá ser alterada no primeiro acesso.</p>
+<dl class="row">
+    <dt class="col-sm-3">Nome de exibição</dt>
+    <dd class="col-sm-9">@Model.DisplayName</dd>
+    <dt class="col-sm-3">Usuário</dt>
+    <dd class="col-sm-9">@Model.Username</dd>
+    <dt class="col-sm-3">Senha temporária</dt>
+    <dd class="col-sm-9"><code>@Model.TemporaryPassword</code></dd>
+</dl>
+<a asp-action="Index" class="btn btn-primary">Voltar às contas</a>
