@@ -1,7 +1,7 @@
 # Implementation Roadmap
 
 **Status:** Working roadmap
-**Last reviewed:** 2026-10-30
+**Last reviewed:** 2026-10-31
 
 This is the master, hierarchical list of approved implementation work. The specifications in this directory remain the source of truth for scope and behavior; this roadmap tracks implementation status and sequence. Its order reflects dependencies, not priority or a commitment to implement every item in one delivery.
 
@@ -19,6 +19,8 @@ When asked what remains to be implemented, report `PENDING`, `BLOCKED`, and `IN 
 Before starting an item, set it to `IN PROGRESS`. Set it to `DONE` only after implementation and relevant validation are complete; code written without passing validation is not done. If validation fails, keep it `IN PROGRESS` and report the failure. Do not mark a whole feature done when only part of its scope is complete.
 
 When a new feature or approved scope change is specified, add its implementation items in the appropriate hierarchy before implementation, with stable IDs, dependencies, and acceptance evidence. Do not add unapproved features or turn open questions into requirements. Preserve completed items and their IDs; do not silently reopen or remove them.
+
+IMP-001, IMP-002, and IMP-004 are complete. IMP-003 is the next ready item, with local-only settings defined in [02 — Architecture](./02-architecture.md#local-development-environment) and [ADR-021](./decisions/021-docker-local-development-configuration.md). Production hosting and deployment remain out of scope. Readiness is not authorization to start unselected work.
 
 ## Phase 0 — Resolve specification gates
 
@@ -44,10 +46,10 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 
 | ID | Implementation item | Depends on | Status |
 |---|---|---|---|
-| IMP-001 | Create the .NET solution and confirmed `src/Web`, `src/Application`, `src/Domain`, and `src/Infrastructure` project structure. | — | PENDING |
-| IMP-002 | Configure ASP.NET Core MVC, Entity Framework Core, Npgsql, and PostgreSQL persistence in the confirmed modular-monolith structure. | IMP-001 | PENDING |
-| IMP-003 | Add the root `Dockerfile` and `docker-compose.yml` for local ASP.NET Core and PostgreSQL execution. | IMP-001, IMP-002 | PENDING |
-| IMP-004 | Build the shared Bootstrap 5 responsive shell: header, collapsible navigation, content area, footer, and confirmed color system. | IMP-001 | PENDING |
+| IMP-001 | Create the .NET solution and confirmed `src/Web`, `src/Application`, `src/Domain`, and `src/Infrastructure` project structure. | — | DONE |
+| IMP-002 | Configure ASP.NET Core MVC, Entity Framework Core, Npgsql, and PostgreSQL persistence in the confirmed modular-monolith structure. | IMP-001 | DONE |
+| IMP-003 | Add the root `Dockerfile` and `docker-compose.yml` for local ASP.NET Core and PostgreSQL execution using the confirmed ports, local environment-variable names, persistent volume, database healthcheck, and startup migrations. | IMP-001, IMP-002 | PENDING |
+| IMP-004 | Build the shared Bootstrap 5 responsive shell: header, collapsible navigation, content area, footer, and confirmed color system. | IMP-001 | DONE |
 
 ## Phase 2 — Patient and responsible-person features
 
