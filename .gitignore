@@ -453,6 +453,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Local-only CID-10 source files.
+/data/reference/cid10/*
+!/data/reference/cid10/README.md
+
 # content below from: https://github.com/github/gitignore/blob/main/Global/Windows.gitignore
 # Windows thumbnail cache files
 Thumbs.db

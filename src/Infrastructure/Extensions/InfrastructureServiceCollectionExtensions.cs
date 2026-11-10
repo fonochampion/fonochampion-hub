@@ -1,5 +1,7 @@
+using FonoChampionHub.Application.Interfaces;
 using FonoChampionHub.Infrastructure.Data.Context;
 using FonoChampionHub.Infrastructure.Identity;
+using FonoChampionHub.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -40,6 +42,8 @@ public static class InfrastructureServiceCollectionExtensions
 
         services.AddSingleton<ILookupNormalizer, UsernameLookupNormalizer>();
         services.AddScoped<InitialAdministratorBootstrapper>();
+        services.AddScoped<ICid10CatalogImporter, Cid10CatalogImporter>();
+        services.AddScoped<ICid10CatalogQueryService, Cid10CatalogQueryService>();
 
         return services;
     }

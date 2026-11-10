@@ -5,7 +5,7 @@
 
 ## Scope
 
-The product is a system for therapy sessions, initially focused on speech-language therapy. The confirmed product scope covers registration of patients, their responsible persons and contact methods, patient anamnesis, scheduling and maintaining patient attendances, professionals initially limited to fonoaudiólogos, and system-user account management.
+The product is a system for therapy sessions, initially focused on speech-language therapy. The confirmed product scope covers a reusable local CID-10 reference catalog, registration of patients, their responsible persons and contact methods, patient anamnesis, scheduling and maintaining patient attendances, professionals initially limited to fonoaudiólogos, and system-user account management.
 
 The first implementation delivery is limited to the application foundation, local username/password authentication, provisioning the initial Administrator through external configuration, and system-user account management using the three fixed roles. Remaining patient, responsible-person, professional, anamnesis, attendance, and evolution capabilities stay in the implementation backlog; this sequencing does not remove them from the confirmed product scope.
 
@@ -20,7 +20,7 @@ Patient > scheduled attendances > one or more participating professionals
 Attendance > one current evolution entry per participating professional
 ```
 
-The patient/responsible-person hierarchy and the attributes listed in the use cases are confirmed. During patient registration, the user may associate zero or more already registered and active professionals with the patient; professionals may also be added later through the patient record. Each professional may be associated with multiple patients. A patient may be registered without an anamnesis. Anamneses are separate, dated records; creating a new record does not overwrite previous records, and editing a record preserves its earlier versions. An attendance concerns one patient and one or more professionals who are active and associated with the patient by the time scheduling completes. If the patient has no active associated professional, the scheduling flow offers all active professionals; selecting one or more creates the patient-professional association(s) and completes scheduling. Administrators and Attendants may schedule or reschedule. Removing an association does not delete or alter existing attendance or evolution records, and an already scheduled attendance and its participants remain unchanged. Professional inactivation preserves patient associations but prevents new scheduling involving the inactive professional; reactivation restores the preserved associations automatically. Inactivation does not alter existing attendance participation or prevent the professional from participating and recording/updating their evolution under the normal attendance-status rules. Every attendance has a scheduled date/time, a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes, and actual start/end date/time recorded during realization. Attendance and evolution records are retained permanently. A rescheduled replacement requires a new duration selection. Each participating professional has a separate, optional evolution entry; updates replace its current content, and prior versions are not retained. UC-008 defines the attendance statuses, cancellation and rescheduling, participant maintenance, and late indication. Role-specific access is defined below; detailed privacy and legal/data-handling requirements and account-field requiredness and validation remain open. Account username, password, session, and failed-login policies are defined in UC-009. Age representation, CID availability before its planned API integration, kinship values, responsible-person/contact cardinality, requiredness, validation, retention for other data, remaining cancellation-reason values, and patient-record lifecycle remain open. Professional council-registration information will be retrieved from a public API in a later stage. Do not infer additional product features such as billing.
+The patient/responsible-person hierarchy and the attributes listed in the use cases are confirmed. The local CID-10 catalog is read-only, reusable, and searchable by code or description; its structure includes chapters, groups, categories, and subcategories. Imported file sets are identified by content fingerprint when no upstream version is available. The supplied CID-O files are outside scope. The requester identifies the CID-10 files as SUS data but their upstream edition/version and terms have not been independently verified; the files and imported data are for internal use only and must not be redistributed. Each environment supplies the files locally for import. During patient registration, the user may associate zero or more already registered and active professionals with the patient; professionals may also be added later through the patient record. Each professional may be associated with multiple patients. A patient may be registered without an anamnesis. Anamneses are separate, dated records; creating a new record does not overwrite previous records, and editing a record preserves its earlier versions. An attendance concerns one patient and one or more professionals who are active and associated with the patient by the time scheduling completes. If the patient has no active associated professional, the scheduling flow offers all active professionals; selecting one or more creates the patient-professional association(s) and completes scheduling. Administrators and Attendants may schedule or reschedule. Removing an association does not delete or alter existing attendance or evolution records, and an already scheduled attendance and its participants remain unchanged. Professional inactivation preserves patient associations but prevents new scheduling involving the inactive professional; reactivation restores the preserved associations automatically. Inactivation does not alter existing attendance participation or prevent the professional from participating and recording/updating their evolution under the normal attendance-status rules. Every attendance has a scheduled date/time, a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes, and actual start/end date/time recorded during realization. Attendance and evolution records are retained permanently. A rescheduled replacement requires a new duration selection. Each participating professional has a separate, optional evolution entry; updates replace its current content, and prior versions are not retained. UC-008 defines the attendance statuses, cancellation and rescheduling, participant maintenance, and late indication. Role-specific access is defined below; detailed privacy and legal/data-handling requirements and account-field requiredness and validation remain open. Account username, password, session, and failed-login policies are defined in UC-009. Kinship values, responsible-person/contact cardinality, requiredness, validation, retention for other data, remaining cancellation-reason values, and patient-record lifecycle remain open. Professional council-registration information will be retrieved from a public API in a later stage. Do not infer additional product features such as billing.
 
 ## Actors
 
@@ -34,12 +34,12 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 ### UC-001 — Register a patient and record anamnesis
 
 **Status:** Confirmed; details open
-**Goal:** Create a patient record with full name and age, a CID attribute whose retrieval by a public API is planned for a later stage, optionally associate one or more already registered, active professionals who will attend the patient, and optionally record dated anamnesis information.
+**Goal:** Create a patient record with full name and date of birth, a CID attribute selected from the local CID-10 catalog, optionally associate one or more already registered, active professionals who will attend the patient, and optionally record dated anamnesis information.
 
 **Main flow:**
 
 1. An Attendant or Administrator starts patient registration.
-2. The user provides the patient's full name and age.
+2. The user provides the patient's full name and required date of birth.
 3. The user may select zero or more already registered, active professionals to associate with the patient.
 4. The Administrator may add an anamnesis, including its date of completion and information in the confirmed anamnesis sections. An Administrator or Therapist may also maintain anamneses through the patient record.
 5. The system creates the patient record, records the selected professional associations, and stores the anamnesis as a dated record when provided.
@@ -47,7 +47,8 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 **Acceptance criteria:**
 
 - A patient record can be created.
-- Full name and age are patient attributes.
+- Full name and date of birth are patient attributes. The date of birth is required, cannot be in the future, and has no maximum age limit.
+- The system derives age from the date of birth and displays months for ages below one year, then completed years.
 - Administrators and Attendants may create and maintain patient records and patient-professional associations.
 - Associating a professional during patient registration is optional; the patient can be registered with no professional.
 - The user can associate one or more already registered, active professionals during patient registration.
@@ -64,9 +65,7 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 - Each anamnesis is a separate dated record. Adding a new anamnesis does not overwrite previous records.
 - Editing an existing anamnesis preserves its previous versions and change history.
 - Detailed prompts or value sets within the anamnesis sections and version-history metadata remain to be defined. Role-based access is specified under Actors.
-- Whether age is entered directly or derived, and its validation, remain to be defined.
-- CID is a patient attribute. Retrieval through a public API is planned for a later stage; the public API has not been selected.
-- Whether CID can be manually entered or otherwise managed before that integration is available remains to be defined.
+- CID is a patient attribute sourced from the local catalog in [ADR-026](./decisions/026-local-cid10-reference-catalog.md). The catalog is searchable by code or description and contains the CID-10 hierarchy of chapters, groups, categories, and subcategories.
 - Duplicate handling remains to be defined.
 
 ### UC-002 — Register and associate a responsible person
@@ -288,15 +287,12 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 - Should username casing be preserved when displayed, or should a canonical case be used?
 - What access-reset/recovery mechanics and account-deletion behavior should be specified for a later delivery?
-- Is age entered directly or derived from another value?
-- Can CID be entered or managed before the planned public API integration?
 - What values are allowed for degree of kinship?
 - What cardinality rules apply to patient/responsible-person/contact relationships?
 - Are telephone and email both required, and can either have multiple values?
 - Must patient, responsible-person, and contact records be viewable, editable, searchable, deletable, or archivable in this stage?
 - How should duplicate records and incomplete registrations be handled?
 - What consent, privacy, retention, and deletion rules apply to these records?
-- Which public API will provide CID, and what are its availability, terms, and integration requirements?
 - Which basic-data fields are required for professionals? Is CPF mandatory, and what format/checksum validation applies?
 - Are certifications optional, and can a professional have multiple certifications?
 - Are telephone and email mandatory for professionals, and can either have multiple values?

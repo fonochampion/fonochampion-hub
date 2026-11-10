@@ -22,6 +22,87 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Cid10CatalogEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ChapterNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("CodeRangeEnd")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<string>("CodeRangeStart")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<string>("CodeSearchKey")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SearchText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("VersionFingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VersionFingerprint", "CodeSearchKey")
+                        .IsUnique()
+                        .HasFilter("\"CodeSearchKey\" IS NOT NULL");
+
+                    b.HasIndex("VersionFingerprint", "ParentId");
+
+                    b.ToTable("Cid10CatalogEntries", (string)null);
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Cid10CatalogVersion", b =>
+                {
+                    b.Property<string>("Fingerprint")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("ImportedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Fingerprint");
+
+                    b.HasIndex("IsCurrent")
+                        .IsUnique()
+                        .HasFilter("\"IsCurrent\" = TRUE");
+
+                    b.ToTable("Cid10CatalogVersions", (string)null);
+                });
+
             modelBuilder.Entity("FonoChampionHub.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -232,6 +313,25 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Cid10CatalogEntry", b =>
+                {
+                    b.HasOne("FonoChampionHub.Domain.Entities.Cid10CatalogVersion", "Version")
+                        .WithMany("Entries")
+                        .HasForeignKey("VersionFingerprint")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FonoChampionHub.Domain.Entities.Cid10CatalogEntry", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("VersionFingerprint", "ParentId")
+                        .HasPrincipalKey("VersionFingerprint", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("Version");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -281,6 +381,16 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Cid10CatalogEntry", b =>
+                {
+                    b.Navigation("Children");
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Cid10CatalogVersion", b =>
+                {
+                    b.Navigation("Entries");
                 });
 #pragma warning restore 612, 618
         }

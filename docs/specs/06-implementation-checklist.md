@@ -32,8 +32,8 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 
 | Gate | Open decision | Source |
 |---|---|---|
-| DG-001 | Age representation and validation | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis) |
-| DG-002 | How CID is managed before the deferred public API integration | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis) |
+| DG-001 | RESOLVED — require date of birth, reject future dates, set no maximum age, and derive age for display in months below one year and completed years thereafter | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [ADR-027](./decisions/027-patient-date-of-birth-and-age-display.md) |
+| DG-002 | RESOLVED — use a reusable, read-only, versioned local CID-10 catalog; no runtime CID API | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [ADR-026](./decisions/026-local-cid10-reference-catalog.md) |
 | DG-003 | Kinship values, patient/responsible-person cardinality, and duplicate handling | [UC-002](./05-use-cases.md#uc-002--register-and-associate-a-responsible-person) |
 | DG-004 | Contact requiredness, multiplicity, and validation | [UC-003](./05-use-cases.md#uc-003--register-contact-methods-for-a-responsible-person) |
 | DG-005 | Professional basic-data fields, CPF requiredness/validation, certification and contact rules, and editable fields | [UC-004–UC-005](./05-use-cases.md#use-cases) |
@@ -48,6 +48,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | DG-014 | RESOLVED — display name is required, trimmed, and nonempty after trimming; email is optional, trimmed, and format-validated when provided, with no uniqueness or ownership verification | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles), [ADR-024](./decisions/024-system-user-account-field-rules.md) |
 | DG-015 | Password reset/recovery behavior and security requirements for its later delivery | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles) |
 | DG-016 | RESOLVED — matching existing Administrator accounts are left unchanged; account conflicts and a configured username that differs from an existing Administrator fail startup without creating or changing an account | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles), [ADR-023](./decisions/023-initial-administrator-bootstrap-lifecycle.md) |
+| DG-017 | RESOLVED — requester directs use of supplied files identified as SUS data without further source/version/terms research; use is internal only, and files/catalog data must not be committed, packaged, or redistributed | [Data and Integrations](./04-data-and-integrations.md#data), [ADR-026](./decisions/026-local-cid10-reference-catalog.md) |
 
 ## Phase 1 — First delivery: foundation and access management
 
@@ -61,11 +62,12 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | IMP-022 | Provision the initial Administrator from configuration supplied outside the source code and require a password change at first login. | IMP-021 | DONE |
 | IMP-020 | Manage system-user accounts: create/edit accounts with username, display name, and email attribute; assign one of the three fixed roles; activate/inactivate accounts; generate a temporary password shown once; and require its change at first login. Password reset/recovery and role-definition management are excluded from this delivery. | IMP-022 | DONE |
 
-## Phase 2 — Business backlog: patient and responsible-person features
+## Phase 2 — Business backlog: shared reference data, patient, and responsible-person features
 
 | ID | Feature | Depends on | Status |
 |---|---|---|---|
-| IMP-005 | Implement patient record creation with full name, age, and the specified initial CID behavior. | IMP-002; DG-001, DG-002 | BLOCKED |
+| IMP-026 | Import the reusable, read-only Brazilian Portuguese CID-10 catalog from a local directory supplied in each environment through an explicit command; preserve its chapter/group/category/subcategory hierarchy and lookup by code or description; identify each file set by content fingerprint when no upstream version is available; exclude CID-O and do not commit, package, or redistribute the files or catalog data. | IMP-002 | DONE |
+| IMP-005 | Implement patient record creation with full name, required date of birth, and CID selected from the local catalog. | IMP-002, IMP-026 | PENDING |
 | IMP-016 | Record optional dated anamneses for patients, including the confirmed sections, separate entries, and preserved revision history. | IMP-005; DG-008 | BLOCKED |
 | IMP-006 | Register a responsible person with full name and degree of kinship and associate them with a patient. | IMP-005; DG-003 | BLOCKED |
 | IMP-007 | Register telephone and email contact details for a responsible person. | IMP-006; DG-004 | BLOCKED |
@@ -89,7 +91,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 |---|---|---|---|
 | IMP-012 | Apply confirmed authentication and authorization rules to implemented business operations. | IMP-005–IMP-011, IMP-015–IMP-022; DG-008, DG-009 | BLOCKED |
 | IMP-013 | Verify implemented screens on desktop, tablet, and smartphone, including the shared layout and confirmed color system. | IMP-004–IMP-011, IMP-015–IMP-022 | BLOCKED |
-| IMP-014 | Run the relevant automated tests and project checks for the approved implementation scope; record the results with the delivery. | IMP-001–IMP-013, IMP-015–IMP-022, IMP-024 | BLOCKED |
+| IMP-014 | Run the relevant automated tests and project checks for the approved implementation scope; record the results with the delivery. | IMP-001–IMP-013, IMP-015–IMP-022, IMP-024, IMP-026 | BLOCKED |
 
 ## Phase 5 — Deferred account-management backlog
 

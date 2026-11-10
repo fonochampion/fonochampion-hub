@@ -9,16 +9,17 @@
 - **Attendance status history:** The system preserves each status change with its author and date/time. For an automatic transition, the author is the professional or user whose action triggered it.
 - **Appointment duration:** Each attendance has a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes. The duration is used with the scheduled date/time to prevent overlaps. A replacement created by rescheduling requires a new duration selection.
 - **Professional CPF:** CPF defines professional uniqueness. A professional CPF must not duplicate another professional's CPF. Whether CPF is mandatory and how it is formatted/validated remain open.
-- **Data sources and ownership:** To be defined
-- **Personal or sensitive data:** Patient and responsible-person records include names, age, CID, kinship, telephone, and email. Anamnesis and attendance evolution contain patient health and clinical information. Professional records include basic personal data, CPF, certification details, and contact information. System-user accounts include username, display name, email attribute, credential, role, and active state. Email is not used for authentication. Temporary passwords for accounts created by an Administrator are shown once and must be changed at first login; the initial Administrator is provisioned from external configuration and must change that password at first login. Password reset/recovery is deferred from the first implementation delivery. Applicable handling requirements and classification remain to be defined.
+- **Data sources and ownership:** The requester identifies the supplied Brazilian Portuguese CID-10 files as SUS data; their upstream edition/version and terms have not been independently verified. Use is restricted to internal environments; do not commit, package, or redistribute the source files or imported catalog data. Each environment supplies the files locally for import (see [ADR-026](./decisions/026-local-cid10-reference-catalog.md)). Sources and ownership for other data remain to be defined.
+- **Personal or sensitive data:** Patient and responsible-person records include names, date of birth, derived age, CID, kinship, telephone, and email. Anamnesis and attendance evolution contain patient health and clinical information. Professional records include basic personal data, CPF, certification details, and contact information. System-user accounts include username, display name, email attribute, credential, role, and active state. Email is not used for authentication. Temporary passwords for accounts created by an Administrator are shown once and must be changed at first login; the initial Administrator is provisioned from external configuration and must change that password at first login. Password reset/recovery is deferred from the first implementation delivery. Applicable handling requirements and classification remain to be defined.
 - **Retention, deletion, and export:** Attendance records and evolution entries are retained permanently and cannot be deleted. Retention and deletion rules for other data, including anamneses, remain to be defined.
 
 ## External integrations
 
 | Service | Purpose | Data shared | Status |
 |---|---|---|---|
-| Public CID API | Retrieve a patient's CID | To be defined | Planned for a later stage; provider and integration details open |
 | Public professional-council API | Retrieve professional council-registration information | To be defined | Planned for a later stage; provider and integration details open |
+
+CID lookups use the local reference catalog defined in [ADR-026](./decisions/026-local-cid10-reference-catalog.md); no runtime CID API is part of the confirmed scope.
 
 ## Privacy and security
 
@@ -28,9 +29,8 @@
 
 ## Assumptions and open questions
 
-- Define age representation, CID handling before API integration, kinship domain values, and cardinality for patient/responsible-person/contact relationships.
+- Define kinship domain values and cardinality for patient/responsible-person/contact relationships.
 - Define contact requiredness, multiplicity, and validation for telephone and email.
-- Select and assess the public CID API before implementing that later-stage integration; no provider has been selected.
 - Define duplicate handling, record updates, and deletion or archival behavior.
 - Role permissions and the initial username/password, session, failed-login, first-login password-change, Administrator bootstrap, and account-field policies are defined in UC-009 and ADR-022/ADR-023/ADR-024. The first implementation delivery uses three fixed roles, an externally configured initial Administrator, and one-time temporary passwords with forced change at first login. Define access-reset mechanics, consent/legal basis, data-protection requirements, and retention.
 - Appointment scheduling is included in the current scope. Administrators and Attendants may schedule or reschedule. If the patient has no active associated professional, the scheduling flow offers all active professionals and creates associations for the selection. Each attendance has a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes and used with its scheduled date/time to prevent overlaps. A professional's existing `Agendado` attendances prevent overlap; other attendance statuses do not count as scheduling conflicts. Overlapping attendances for the same patient are prevented.
