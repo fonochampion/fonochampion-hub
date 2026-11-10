@@ -1,11 +1,15 @@
 ---
 name: specification-documentation
-description: "Use when recording requester-confirmed product decisions in this repository's specifications and preparing a documentation-only pull request after explicit approval."
+description: "Use to record requester-confirmed product decisions in specifications and the roadmap; standalone documentation changes require separate publication approval."
 ---
 
 # Project Specification Documentation
 
-Formalize product scope and decisions only after the requester has explicitly confirmed them, using the analysis from the `specification` skill where applicable. Update the implementation roadmap for approved work. Produce a clear documentation-only change, then request separate approval before creating a branch, commit, push, or pull request.
+Formalize product scope and decisions only after the requester has explicitly confirmed them, using the analysis from the `specification` skill where applicable. Update the implementation roadmap for approved work. For a standalone documentation task, produce a documentation-only change and request separate approval before publication.
+
+## Delegated API integration mode
+
+When invoked by `.agents/skills/third-party-api-integration/SKILL.md`, this skill handles only the approved specification and roadmap edits. Follow the content, source-of-truth, review, and validation requirements in steps 1–7; the API integration skill owns the combined documentation-and-code branch, commit, and PR workflow. In this mode, the requester's approval of the complete API implementation plan authorizes publication of the planned PR, so do not require a second publication approval or create a separate documentation-only PR. Do not edit application code or merge the PR from this skill.
 
 ## Sources of truth
 

@@ -8,6 +8,7 @@ These guidelines apply to Copilot working in this repository.
 |---|---|---|
 | Analyze a GitHub issue | `.agents/skills/open-issue-analysis/SKILL.md` | Analyze first; wait for approval before implementation. |
 | Explore or specify a product change | `.agents/skills/specification/SKILL.md` | Produce a decision brief; do not edit specifications or code. |
+| Analyze, specify, implement, and publish a third-party API integration | `.agents/skills/third-party-api-integration/SKILL.md` | Start from supplied API documentation; wait for plan approval before implementation and PR publication. |
 | Record an approved product decision | `.agents/skills/specification-documentation/SKILL.md` | Update specifications and roadmap; do not implement application behavior. |
 | Assess roadmap readiness or report remaining work | `.agents/skills/implementation-planning/SKILL.md` | Plan only; do not implement. |
 | Implement selected roadmap items | `.agents/skills/implement-selected-items/SKILL.md` | Implement only the explicitly selected item IDs. |
