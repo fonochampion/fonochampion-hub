@@ -29,6 +29,7 @@ Start with [000-template.md](./000-template.md). When recording a decision, incl
 - [022 — Initial authentication policy](./022-initial-authentication-policy.md)
 - [023 — Initial Administrator bootstrap lifecycle](./023-initial-administrator-bootstrap-lifecycle.md)
 - [024 — System-user account field rules](./024-system-user-account-field-rules.md)
+- [025 — Agent guidance and skill boundaries](./025-agent-guidance-and-skill-boundaries.md)
 
 ## Superseded decisions
 

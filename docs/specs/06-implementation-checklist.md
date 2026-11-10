@@ -97,6 +97,12 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 |---|---|---|---|
 | IMP-024 | Add the Administrator-initiated password reset/recovery capability for system-user accounts. | IMP-020; DG-015 | BLOCKED |
 
+## Phase 6 — Agent guidance and skills
+
+| ID | Implementation item | Depends on | Status |
+|---|---|---|---|
+| IMP-025 | Clarify Copilot instruction entry points and skill responsibilities; remove duplicated or stale instructions and verify discovery using Copilot CLI. | — | DONE |
+
 ## Deferred or excluded from the current roadmap
 
 Do not implement these unless they are specified and approved as a future scope change:
