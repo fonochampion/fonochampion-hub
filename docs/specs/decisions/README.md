@@ -30,6 +30,8 @@ Start with [000-template.md](./000-template.md). When recording a decision, incl
 - [023 — Initial Administrator bootstrap lifecycle](./023-initial-administrator-bootstrap-lifecycle.md)
 - [024 — System-user account field rules](./024-system-user-account-field-rules.md)
 - [025 — Agent guidance and skill boundaries](./025-agent-guidance-and-skill-boundaries.md)
+- [026 — Local CID-10 reference catalog](./026-local-cid10-reference-catalog.md)
+- [027 — Patient date of birth and age display](./027-patient-date-of-birth-and-age-display.md)
 
 ## Superseded decisions
 

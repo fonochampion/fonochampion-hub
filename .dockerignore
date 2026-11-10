@@ -2,6 +2,7 @@
 .vs
 .idea
 .vscode
+/data/reference/cid10/
 **/bin
 **/obj
 .env*

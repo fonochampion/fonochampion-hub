@@ -16,6 +16,8 @@ services:
       InitialAdministrator__Password: ${InitialAdministrator__Password:?Set InitialAdministrator__Password in .env}
     ports:
       - "8080:8080"
+    volumes:
+      - ./data/reference/cid10:/data/cid10:ro
 
   db:
     image: postgres:17-alpine

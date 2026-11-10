@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using FonoChampionHub.Application.Interfaces;
 using FonoChampionHub.Infrastructure.Data.Context;
 using FonoChampionHub.Infrastructure.Extensions;
 using FonoChampionHub.Infrastructure.Identity;
@@ -8,7 +9,22 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+string? cid10ImportDirectory = null;
+if (args.Length > 0 && args[0] == "--import-cid10")
+{
+    if (args.Length != 2 || string.IsNullOrWhiteSpace(args[1]))
+    {
+        throw new ArgumentException("Usage: --import-cid10 <source-directory>");
+    }
+
+    cid10ImportDirectory = args[1];
+}
+else if (args.Contains("--import-cid10", StringComparer.Ordinal))
+{
+    throw new ArgumentException("--import-cid10 must be the first and only application argument.");
+}
+
+var builder = WebApplication.CreateBuilder(cid10ImportDirectory is null ? args : []);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -45,6 +61,19 @@ if (app.Environment.IsDevelopment())
     await using var scope = app.Services.CreateAsyncScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.MigrateAsync();
+}
+
+if (cid10ImportDirectory is not null)
+{
+    await using var importScope = app.Services.CreateAsyncScope();
+    var importer = importScope.ServiceProvider.GetRequiredService<ICid10CatalogImporter>();
+    var importResult = await importer.ImportAsync(cid10ImportDirectory);
+    Console.WriteLine(
+        $"CID-10 catalog imported: {importResult.TotalEntryCount} entries " +
+        $"(chapters: {importResult.ChapterCount}, groups: {importResult.GroupCount}, " +
+        $"categories: {importResult.CategoryCount}, subcategories: {importResult.SubcategoryCount}); " +
+        $"fingerprint: {importResult.Fingerprint}; already current: {importResult.WasAlreadyCurrent}.");
+    return;
 }
 
 await using (var scope = app.Services.CreateAsyncScope())
