@@ -1,32 +1,46 @@
 # AI Agent Guidelines
 
-These guidelines are shared by Copilot, Antigravity, and any other agent used in this repository. The specifications in `docs/specs/` are the source of truth for the product.
+These guidelines apply to Copilot working in this repository.
 
-## Before starting work
+## Choose the task skill
 
-- Read these guidelines and the `docs/specs/` documents relevant to the task.
-- Treat confirmed specifications and accepted decisions as constraints. Treat `To be defined` fields and open decisions as unknown; do not invent requirements, product domain, undecided technologies, or behavior.
-- Follow the confirmed architectural principles: modular monolith, simplicity, low operational cost, maintainability, responsiveness, and future evolvability. Do not introduce microservices, Kubernetes, messaging infrastructure, distributed cache, or other unnecessary components without an explicit confirmed requirement and requester approval.
-- Apply clean-code practices by favoring readable, cohesive, maintainable code and avoiding unnecessary duplication or complexity.
-- Follow the confirmed responsive UI specification: Bootstrap 5, with a header, collapsible navigation menu, content area, and footer, supporting desktop, tablet, and smartphone viewports. Do not invent exact breakpoints or menu interactions beyond the specs.
-- Follow the confirmed visual color system in `docs/specs/03-ux-and-accessibility.md`, including token values, intended use, light/dark theme roles, and the approximate 60/30/10 color balance. Treat reference images as chromatic references only; do not copy their layout, components, or structure. Validate contrast, and do not assume an accessibility conformance level not specified there.
-- Follow the confirmed Docker local development requirement: provide a root `Dockerfile` for the ASP.NET Core application and a root `docker-compose.yml` for running it with PostgreSQL locally. This does not imply production containerization; do not invent unspecified Docker settings as confirmed requirements.
-- The confirmed product scope includes patients and responsible persons, optional dated anamnesis records with preserved revisions, scheduled and realized patient attendance/evolution records, professional registration initially limited to fonoaudiólogos (unique CPF, certifications, telephone/email contacts, and create/modify/inactivate/delete operations), and system-user account management. During patient registration, association with zero or more existing, active professionals is optional; an active professional may also be added through the patient record or, when no active association exists, through scheduling. A professional may be associated with multiple patients but cannot be deleted while associated. Professional council information via public API is deferred. The initial roles and permissions are defined in `docs/specs/05-use-cases.md` and ADR-018; each account has exactly one initial role: `Administrador`, `Atendente`, or `Terapeuta`. The first implementation delivery is the application foundation, local username/password authentication, initial Administrator provisioning from external configuration, and account management with the three fixed roles; other confirmed business features remain in the checklist backlog. Follow ADR-019, ADR-022, ADR-023, and ADR-024 for the confirmed account/authentication behavior. Do not contradict the confirmed role boundaries, attendance lifecycle, or evolution ownership. Password reset/recovery, account deletion, privacy/legal requirements, and remaining cancellation-reason values remain open. Consult `docs/specs/05-use-cases.md`; do not infer open fields, validations, responsible-person/contact cardinality, contact/certification requiredness or multiplicity, CPF validation, professional deletion semantics, account deletion, or other features.
-- The initial scope includes scheduling and maintaining patient attendances. Each attendance has a required scheduled date/time, a duration selected from the fixed options of 10, 20, 30, 40, 50, or 60 minutes, and one or more active professionals associated with the patient by the time scheduling completes; when no active association exists, scheduling associates the selected active professionals. A replacement created by rescheduling requires a new duration selection. Any participating professional may start and end an attendance while allowed by its status; a participating professional or Administrator may cancel while `Agendado`. Actual start/end times are recorded. Inactivation does not alter existing attendance participation or otherwise-allowed evolution updates. Each participating professional has one optional current evolution entry with a required therapeutic-plan field and optional observations; updates replace the current content without preserving prior versions, and each professional may record or update only their own entry while the attendance is `Em andamento` or `Aguardando Evolução`, including when the actor is an Administrator. Role-based access to patient, anamnesis, attendance, and evolution data, participant maintenance, scheduling, and cancellation reasons is specified in `docs/specs/05-use-cases.md` and ADR-018. Attendance and evolution records are retained permanently and cannot be deleted; specified audit metadata is complete. Remaining privacy/legal requirements and configurable cancellation-reason values remain open.
-- Use `docs/specs/06-implementation-checklist.md` as the master implementation roadmap. When asked what remains, report pending, blocked, and in-progress items in its hierarchy, exclude done items, and explain blockers. Update item status during implementation; mark an item done only after its implementation and relevant validation pass. Add approved new work to the roadmap before implementing it, without inventing scope or changing completed history.
-- If a decision could change scope, user experience, data, security, or cost, ask for confirmation before marking it as decided.
-- The setup-only restriction has been lifted. Implement only roadmap items explicitly selected by the requester; do not start unselected application work.
+| Request | Skill | Boundary |
+|---|---|---|
+| Analyze a GitHub issue | `.agents/skills/open-issue-analysis/SKILL.md` | Analyze first; wait for approval before implementation. |
+| Explore or specify a product change | `.agents/skills/specification/SKILL.md` | Produce a decision brief; do not edit specifications or code. |
+| Record an approved product decision | `.agents/skills/specification-documentation/SKILL.md` | Update specifications and roadmap; do not implement application behavior. |
+| Assess roadmap readiness or report remaining work | `.agents/skills/implementation-planning/SKILL.md` | Plan only; do not implement. |
+| Implement selected roadmap items | `.agents/skills/implement-selected-items/SKILL.md` | Implement only the explicitly selected item IDs. |
 
-## Maintaining specifications
+Load only the skill relevant to the request. Each skill owns its task procedure.
 
-- Write in concise, verifiable English.
-- Distinguish confirmed requirements, assumptions, and open questions.
-- Give requirements and acceptance criteria stable identifiers.
-- Record significant decisions in `docs/specs/decisions/`, including context, decision, and consequences.
-- Update the index in `docs/specs/README.md` when adding or renaming documents.
+## Project source of truth
 
-## Using multiple tools
+- `docs/specs/` is the source of truth for product requirements, accepted decisions, and implementation status. Read the relevant documents before proposing or changing product behavior.
+- Treat accepted decisions as constraints and `To be defined` fields as open. Do not invent requirements or resolve open questions without requester confirmation.
+- Keep project-specific requirements in `docs/specs/`, not duplicated in skills. Skills should link to the relevant specifications.
+- Follow the roadmap in `docs/specs/06-implementation-checklist.md`. Add approved work before implementation, implement only selected items, and mark work `DONE` only after relevant validation passes.
 
-- Copilot and Antigravity should consult these guidelines and the specifications before proposing or performing work.
-- When using Grok through its website/app, provide `AGENTS.md` and only the relevant specification documents as context. State the goal explicitly and ask it to preserve open questions rather than assume answers.
-- Do not include credentials, tokens, or personal data in prompts or context documents.
+## Governance and precedence
+
+- This repository supports only Copilot CLI agent guidance; other agent frameworks are out of scope unless explicitly added.
+- `AGENTS.md` is the single repository entry point and the default selector for task routing.
+- Skills are intentionally small and specialized. Each skill has a clear task boundary, expected outcome, and reviewable validation criteria.
+- In case of conflict, precedence is: `docs/specs/` > `AGENTS.md` > skill instructions.
+- Product requirements and accepted decisions in `docs/specs/` take precedence over any repository guidance that would narrow or redefine confirmed scope.
+- Duplicate or stale instructions must not remain in force without explicit review. Outdated guidance is removed only after verification and a documented review.
+- A skill is considered valid only when it exists in `.agents/skills/`, matches a single dedicated task, and passes discovery/compatibility validation for the Copilot CLI.
+- Skills are reviewed before they are considered ready for routine use.
+
+## Confirmed project constraints
+
+- Follow the confirmed stack, source layout, dependency direction, and modular-monolith principles in `docs/specs/02-architecture.md` and the accepted architecture decisions. Do not introduce unnecessary infrastructure or change confirmed project boundaries without approval.
+- Follow the responsive layout, Bootstrap 5, and visual-system requirements in `docs/specs/03-ux-and-accessibility.md`. Do not invent unspecified breakpoints, interactions, or accessibility conformance.
+- Preserve the local Docker requirements in `docs/specs/02-architecture.md`; they do not define production deployment.
+- Follow product scope, roles, permissions, and lifecycle rules in `docs/specs/00-product-brief.md`, `docs/specs/05-use-cases.md`, and their accepted decisions. Do not infer open data rules, privacy requirements, or behavior.
+- Favor clean, cohesive, maintainable solutions. Avoid unnecessary duplication and complexity.
+
+## Safety and collaboration
+
+- Ask before making a decision that could change scope, user experience, data, security, architecture, or cost.
+- Preserve unrelated work. Do not expose credentials, tokens, or personal data in prompts or documentation.
