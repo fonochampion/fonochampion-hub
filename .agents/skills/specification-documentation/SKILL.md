@@ -38,7 +38,6 @@ Formalize product scope and decisions only after the requester has explicitly co
 15. Inspect staged paths and diff before committing. The pull request may contain only Markdown documentation in:
     - `docs/specs/**/*.md`
     - `AGENTS.md`
-    - `.agent/**/*.md`
     - `.agents/skills/**/SKILL.md`
 
     If any staged file is outside this allowlist, or contains application code or implementation artifacts, unstage it and do not include it. If the documentation change cannot be isolated safely, stop and ask the requester.
