@@ -39,3 +39,16 @@ public sealed class CreatedProfessionalViewModel
 {
     public required string FullName { get; init; }
 }
+
+public sealed class ProfessionalListItemViewModel
+{
+    public required int Id { get; init; }
+
+    public required string FullName { get; init; }
+
+    public required string Cpf { get; init; }
+
+    public required bool IsActive { get; init; }
+
+    public required int AssociatedPatientCount { get; init; }
+}

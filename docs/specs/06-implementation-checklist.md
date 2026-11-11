@@ -24,7 +24,7 @@ When a new feature or approved scope change is specified, add its implementation
 
 Readiness is separate from status: keep the existing status values and mark an item ready only when its scope is sufficiently specified, all listed dependencies are `DONE`, and all relevant decision gates are resolved. Prioritize ready items with no dependencies before ready items whose dependencies are complete. Keep blocked items visible with the exact dependency or open decision that prevents implementation.
 
-IMP-001, IMP-002, IMP-003, IMP-004, IMP-005, IMP-006, IMP-007, IMP-008, IMP-015, IMP-018, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. Reassess other pending work against its listed dependencies and decision gates. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
+IMP-001, IMP-002, IMP-003, IMP-004, IMP-005, IMP-006, IMP-007, IMP-008, IMP-010, IMP-015, IMP-018, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. Reassess other pending work against its listed dependencies and decision gates. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
 
 ## Phase 0 — Resolve specification gates
 
@@ -83,7 +83,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | IMP-018 | Provide configurable cancellation-reason maintenance with create, list, edit, and inactivate operations; exclude the fixed `Remarcação` system reason, which is assigned automatically during rescheduling. | IMP-002; DG-012 | DONE |
 | IMP-019 | Remove patient-professional associations without deleting or altering existing attendance/evolution records or changing already scheduled attendance participants. | IMP-015, IMP-017 | BLOCKED |
 | IMP-009 | Modify a professional, including the confirmed CPF uniqueness and certification/contact maintenance rules. | IMP-008; DG-005 | BLOCKED |
-| IMP-010 | Inactivate/reactivate a professional, preserve patient associations during inactivity, apply the confirmed scheduling restriction, and preserve existing attendance participation/evolution rights. | IMP-008 | BLOCKED |
+| IMP-010 | Inactivate/reactivate a professional, preserve patient associations during inactivity, apply the confirmed scheduling restriction, and preserve existing attendance participation/evolution rights. | IMP-008 | DONE |
 | IMP-011 | Delete a professional only when no patient is associated, using the confirmed deletion semantics. | IMP-008; DG-007 | BLOCKED |
 
 ## Phase 4 — Cross-cutting completion for the business backlog

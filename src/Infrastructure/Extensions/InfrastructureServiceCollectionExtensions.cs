@@ -49,6 +49,7 @@ public static class InfrastructureServiceCollectionExtensions
             IPatientProfessionalAssociationService,
             PatientProfessionalAssociationService>();
         services.AddScoped<IProfessionalRegistrationService, ProfessionalRegistrationService>();
+        services.AddScoped<IProfessionalManagementService, ProfessionalManagementService>();
 
         return services;
     }

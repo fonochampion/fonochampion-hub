@@ -64,6 +64,8 @@ public sealed class ProfessionalOptionViewModel
     public required int Id { get; init; }
 
     public required string FullName { get; init; }
+
+    public required bool IsActive { get; init; }
 }
 
 public sealed class PatientListItemViewModel

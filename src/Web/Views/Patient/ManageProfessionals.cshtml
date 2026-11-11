@@ -22,7 +22,13 @@
         <ul>
             @foreach (var professional in Model.AssociatedProfessionals)
             {
-                <li>@professional.FullName</li>
+                <li>
+                    @professional.FullName
+                    @if (!professional.IsActive)
+                    {
+                        <span class="badge text-bg-secondary">Inativo</span>
+                    }
+                </li>
             }
         </ul>
     }
