@@ -2,6 +2,7 @@ using FonoChampionHub.Application.DTOs;
 using FonoChampionHub.Application.Interfaces;
 using FonoChampionHub.Domain.Entities;
 using FonoChampionHub.Domain.Enums;
+using FonoChampionHub.Domain.Services;
 using FonoChampionHub.Infrastructure.Identity;
 using FonoChampionHub.Web.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -84,7 +85,7 @@ public sealed class PatientController(
                 }
 
                 hasContactInput = true;
-                ResponsiblePersonContactType? validType = null;
+                ContactMethodType? validType = null;
                 if (contact.Type is { } type && Enum.IsDefined(type))
                 {
                     validType = type;
@@ -106,10 +107,10 @@ public sealed class PatientController(
                 {
                     var isValid = contactType switch
                     {
-                        ResponsiblePersonContactType.Telephone =>
-                            ResponsiblePersonContact.IsValidBrazilianTelephone(value),
-                        ResponsiblePersonContactType.Email =>
-                            ResponsiblePersonContact.IsValidEmailAddress(value),
+                        ContactMethodType.Telephone =>
+                            ContactValueValidator.IsValidBrazilianTelephone(value),
+                        ContactMethodType.Email =>
+                            ContactValueValidator.IsValidEmailAddress(value),
                         _ => false
                     };
                     if (!isValid)

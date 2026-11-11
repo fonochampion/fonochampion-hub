@@ -169,6 +169,86 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.ToTable("Patients", (string)null);
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Professional", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Cpf")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("character varying(11)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Cpf")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Professionals_Cpf");
+
+                    b.ToTable("Professionals", (string)null);
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ProfessionalCertification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("CompletionDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProfessionalId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Registration")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfessionalId");
+
+                    b.ToTable("ProfessionalCertifications", (string)null);
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ProfessionalContact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProfessionalId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfessionalId");
+
+                    b.ToTable("ProfessionalContacts", (string)null);
+                });
+
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePerson", b =>
                 {
                     b.Property<int>("Id")
@@ -465,6 +545,28 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.Navigation("Cid10CatalogEntry");
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ProfessionalCertification", b =>
+                {
+                    b.HasOne("FonoChampionHub.Domain.Entities.Professional", "Professional")
+                        .WithMany("Certifications")
+                        .HasForeignKey("ProfessionalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Professional");
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ProfessionalContact", b =>
+                {
+                    b.HasOne("FonoChampionHub.Domain.Entities.Professional", "Professional")
+                        .WithMany("Contacts")
+                        .HasForeignKey("ProfessionalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Professional");
+                });
+
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePerson", b =>
                 {
                     b.HasOne("FonoChampionHub.Domain.Entities.Patient", "Patient")
@@ -551,6 +653,13 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.Patient", b =>
                 {
                     b.Navigation("ResponsiblePersons");
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Professional", b =>
+                {
+                    b.Navigation("Certifications");
+
+                    b.Navigation("Contacts");
                 });
 
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePerson", b =>

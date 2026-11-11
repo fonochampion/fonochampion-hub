@@ -33,7 +33,7 @@ public sealed class ResponsiblePersonInputViewModel
 
 public sealed class ResponsiblePersonContactInputViewModel
 {
-    public ResponsiblePersonContactType? Type { get; set; }
+    public ContactMethodType? Type { get; set; }
 
     public string? Value { get; set; }
 }

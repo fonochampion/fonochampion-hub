@@ -1,0 +1,189 @@
+@model CreateProfessionalViewModel
+@using FonoChampionHub.Domain.Enums
+@{
+    ViewData["Title"] = "Cadastrar profissional";
+}
+
+<h1 class="h2 mb-4">Cadastrar profissional</h1>
+
+<form asp-action="Create" method="post" class="form-layout">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label">Nome completo</label>
+        <input asp-for="FullName" class="form-control" autocomplete="name" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <div class="mb-4">
+        <label asp-for="Cpf" class="form-label">CPF</label>
+        <input asp-for="Cpf" class="form-control" inputmode="numeric" autocomplete="off" />
+        <span asp-validation-for="Cpf" class="text-danger"></span>
+    </div>
+
+    <fieldset class="mb-4">
+        <legend class="h5">Certificações (opcional)</legend>
+        <div id="professional-certification-list">
+            @for (var index = 0; index < Model.Certifications.Count; index++)
+            {
+                <div class="row g-3 align-items-end mb-3" data-professional-certification-row>
+                    <div class="col-md-4">
+                        <label asp-for="Certifications[index].Description"
+                               data-certification-label="Description"
+                               class="form-label">Descrição</label>
+                        <input asp-for="Certifications[index].Description"
+                               data-certification-input="Description"
+                               class="form-control" />
+                        <span asp-validation-for="Certifications[index].Description"
+                              data-certification-validation="Description"
+                              class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Certifications[index].Registration"
+                               data-certification-label="Registration"
+                               class="form-label">Registro alfanumérico</label>
+                        <input asp-for="Certifications[index].Registration"
+                               data-certification-input="Registration"
+                               class="form-control" />
+                        <span asp-validation-for="Certifications[index].Registration"
+                              data-certification-validation="Registration"
+                              class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Certifications[index].CompletionDate"
+                               data-certification-label="CompletionDate"
+                               class="form-label">Data de conclusão</label>
+                        <input asp-for="Certifications[index].CompletionDate"
+                               data-certification-input="CompletionDate"
+                               class="form-control"
+                               type="date" />
+                        <span asp-validation-for="Certifications[index].CompletionDate"
+                              data-certification-validation="CompletionDate"
+                              class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                data-remove-professional-certification>
+                            Remover
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button"
+                class="btn btn-outline-primary"
+                id="add-professional-certification">
+            Adicionar certificação
+        </button>
+    </fieldset>
+
+    <fieldset class="mb-4">
+        <legend class="h5">Contatos (ao menos um)</legend>
+        <div id="professional-contact-list">
+            @for (var index = 0; index < Model.Contacts.Count; index++)
+            {
+                <div class="row g-3 align-items-end mb-3" data-professional-contact-row>
+                    <div class="col-md-3">
+                        <label asp-for="Contacts[index].Type"
+                               data-contact-label="Type"
+                               class="form-label">Tipo</label>
+                        <select asp-for="Contacts[index].Type"
+                                data-contact-input="Type"
+                                asp-items="Html.GetEnumSelectList<ContactMethodType>()"
+                                class="form-select">
+                            <option value="">Selecione</option>
+                        </select>
+                        <span asp-validation-for="Contacts[index].Type"
+                              data-contact-validation="Type"
+                              class="text-danger"></span>
+                    </div>
+                    <div class="col-md-7">
+                        <label asp-for="Contacts[index].Value"
+                               data-contact-label="Value"
+                               class="form-label">Valor</label>
+                        <input asp-for="Contacts[index].Value"
+                               data-contact-input="Value"
+                               class="form-control"
+                               autocomplete="off" />
+                        <span asp-validation-for="Contacts[index].Value"
+                              data-contact-validation="Value"
+                              class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                data-remove-professional-contact>
+                            Remover
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button"
+                class="btn btn-outline-primary"
+                id="add-professional-contact">
+            Adicionar telefone ou e-mail
+        </button>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary">Cadastrar profissional</button>
+</form>
+
+<template id="professional-certification-template">
+    <div class="row g-3 align-items-end mb-3" data-professional-certification-row>
+        <div class="col-md-4">
+            <label data-certification-label="Description" class="form-label">Descrição</label>
+            <input data-certification-input="Description" class="form-control" />
+            <span class="text-danger" data-certification-validation="Description"></span>
+        </div>
+        <div class="col-md-3">
+            <label data-certification-label="Registration" class="form-label">Registro alfanumérico</label>
+            <input data-certification-input="Registration" class="form-control" />
+            <span class="text-danger" data-certification-validation="Registration"></span>
+        </div>
+        <div class="col-md-3">
+            <label data-certification-label="CompletionDate" class="form-label">Data de conclusão</label>
+            <input data-certification-input="CompletionDate" class="form-control" type="date" />
+            <span class="text-danger" data-certification-validation="CompletionDate"></span>
+        </div>
+        <div class="col-md-2">
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    data-remove-professional-certification>
+                Remover
+            </button>
+        </div>
+    </div>
+</template>
+
+<template id="professional-contact-template">
+    <div class="row g-3 align-items-end mb-3" data-professional-contact-row>
+        <div class="col-md-3">
+            <label data-contact-label="Type" class="form-label">Tipo</label>
+            <select data-contact-input="Type" class="form-select">
+                <option value="">Selecione</option>
+                @foreach (var option in Html.GetEnumSelectList<ContactMethodType>())
+                {
+                    <option value="@option.Value">@option.Text</option>
+                }
+            </select>
+            <span class="text-danger" data-contact-validation="Type"></span>
+        </div>
+        <div class="col-md-7">
+            <label data-contact-label="Value" class="form-label">Valor</label>
+            <input data-contact-input="Value" class="form-control" autocomplete="off" />
+            <span class="text-danger" data-contact-validation="Value"></span>
+        </div>
+        <div class="col-md-2">
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    data-remove-professional-contact>
+                Remover
+            </button>
+        </div>
+    </div>
+</template>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/professional-registration.js" asp-append-version="true"></script>
+}

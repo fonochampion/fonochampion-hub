@@ -1,6 +1,7 @@
 using FonoChampionHub.Application.DTOs;
 using FonoChampionHub.Domain.Entities;
 using FonoChampionHub.Domain.Enums;
+using FonoChampionHub.Domain.Services;
 using FonoChampionHub.Infrastructure.Data.Context;
 using FonoChampionHub.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -44,13 +45,13 @@ public sealed class PatientRegistrationTests
                     ResponsiblePersonKinship.Mother,
                     [
                         new RegisterResponsiblePersonContactRequest(
-                            ResponsiblePersonContactType.Telephone,
+                            ContactMethodType.Telephone,
                             " (11) 91234-5678 "),
                         new RegisterResponsiblePersonContactRequest(
-                            ResponsiblePersonContactType.Telephone,
+                            ContactMethodType.Telephone,
                             "+55 11 3333-4444"),
                         new RegisterResponsiblePersonContactRequest(
-                            ResponsiblePersonContactType.Email,
+                            ContactMethodType.Email,
                             " ana@example.com ")
                     ]),
                 new RegisterResponsiblePersonRequest(
@@ -58,7 +59,7 @@ public sealed class PatientRegistrationTests
                     ResponsiblePersonKinship.Grandparent,
                     [
                         new RegisterResponsiblePersonContactRequest(
-                            ResponsiblePersonContactType.Email,
+                            ContactMethodType.Email,
                             "joao@example.com")
                     ])
             ]));
@@ -92,22 +93,22 @@ public sealed class PatientRegistrationTests
             contacts,
             contact =>
             {
-                Assert.Equal(ResponsiblePersonContactType.Telephone, contact.Type);
+                Assert.Equal(ContactMethodType.Telephone, contact.Type);
                 Assert.Equal("(11) 91234-5678", contact.Value);
             },
             contact =>
             {
-                Assert.Equal(ResponsiblePersonContactType.Telephone, contact.Type);
+                Assert.Equal(ContactMethodType.Telephone, contact.Type);
                 Assert.Equal("+55 11 3333-4444", contact.Value);
             },
             contact =>
             {
-                Assert.Equal(ResponsiblePersonContactType.Email, contact.Type);
+                Assert.Equal(ContactMethodType.Email, contact.Type);
                 Assert.Equal("ana@example.com", contact.Value);
             },
             contact =>
             {
-                Assert.Equal(ResponsiblePersonContactType.Email, contact.Type);
+                Assert.Equal(ContactMethodType.Email, contact.Type);
                 Assert.Equal("joao@example.com", contact.Value);
             });
     }
@@ -129,7 +130,7 @@ public sealed class PatientRegistrationTests
                     ResponsiblePersonKinship.Mother,
                     [
                         new RegisterResponsiblePersonContactRequest(
-                            ResponsiblePersonContactType.Telephone,
+                            ContactMethodType.Telephone,
                             "11912345678")
                     ]),
                 new RegisterResponsiblePersonRequest(
@@ -137,7 +138,7 @@ public sealed class PatientRegistrationTests
                     ResponsiblePersonKinship.LegalGuardian,
                     [
                         new RegisterResponsiblePersonContactRequest(
-                            ResponsiblePersonContactType.Email,
+                            ContactMethodType.Email,
                             "ana@example.com")
                     ])
             ]));
@@ -169,11 +170,11 @@ public sealed class PatientRegistrationTests
     }
 
     [Theory]
-    [InlineData(ResponsiblePersonContactType.Telephone, "123")]
-    [InlineData(ResponsiblePersonContactType.Telephone, "+1 11 91234-5678")]
-    [InlineData(ResponsiblePersonContactType.Email, "not-an-email")]
+    [InlineData(ContactMethodType.Telephone, "123")]
+    [InlineData(ContactMethodType.Telephone, "+1 11 91234-5678")]
+    [InlineData(ContactMethodType.Email, "not-an-email")]
     public async Task RegisterAsync_rejects_invalid_contact_formats(
-        ResponsiblePersonContactType type,
+        ContactMethodType type,
         string value)
     {
         await using var dbContext = CreateDbContext();
@@ -206,7 +207,7 @@ public sealed class PatientRegistrationTests
         string value,
         bool expected)
     {
-        Assert.Equal(expected, ResponsiblePersonContact.IsValidBrazilianTelephone(value));
+        Assert.Equal(expected, ContactValueValidator.IsValidBrazilianTelephone(value));
     }
 
     [Fact]

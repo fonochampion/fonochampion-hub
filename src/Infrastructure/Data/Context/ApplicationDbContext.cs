@@ -19,6 +19,13 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<ResponsiblePersonContact> ResponsiblePersonContacts =>
         Set<ResponsiblePersonContact>();
 
+    public DbSet<Professional> Professionals => Set<Professional>();
+
+    public DbSet<ProfessionalCertification> ProfessionalCertifications =>
+        Set<ProfessionalCertification>();
+
+    public DbSet<ProfessionalContact> ProfessionalContacts => Set<ProfessionalContact>();
+
     public DbSet<AttendanceCancellationReason> AttendanceCancellationReasons =>
         Set<AttendanceCancellationReason>();
 

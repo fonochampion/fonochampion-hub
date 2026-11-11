@@ -1,0 +1,106 @@
+using FonoChampionHub.Application.DTOs;
+using FonoChampionHub.Application.Interfaces;
+using FonoChampionHub.Domain.Entities;
+using FonoChampionHub.Domain.Enums;
+using FonoChampionHub.Web.Controllers;
+using FonoChampionHub.Web.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FonoChampionHub.Web.Tests;
+
+public sealed class ProfessionalControllerTests
+{
+    [Fact]
+    public async Task Create_trims_and_submits_valid_certifications_and_contacts()
+    {
+        var service = new CapturingProfessionalRegistrationService();
+        var controller = CreateController(service);
+
+        var result = await controller.Create(
+            new CreateProfessionalViewModel
+            {
+                FullName = " Ana Silva ",
+                Cpf = " 529.982.247-25 ",
+                Certifications =
+                [
+                    new ProfessionalCertificationInputViewModel
+                    {
+                        Description = " Linguagem ",
+                        Registration = " CRFA1234 ",
+                        CompletionDate = new DateOnly(2024, 3, 10)
+                    }
+                ],
+                Contacts =
+                [
+                    new ProfessionalContactInputViewModel
+                    {
+                        Type = ContactMethodType.Telephone,
+                        Value = " +55 (11) 91234-5678 "
+                    },
+                    new ProfessionalContactInputViewModel
+                    {
+                        Type = ContactMethodType.Email,
+                        Value = " ana@example.com "
+                    }
+                ]
+            },
+            CancellationToken.None);
+
+        var view = Assert.IsType<ViewResult>(result);
+        Assert.Equal("Created", view.ViewName);
+        Assert.Equal("Ana Silva", service.Request!.FullName);
+        Assert.Equal("529.982.247-25", service.Request.Cpf);
+        Assert.Equal("Linguagem", service.Request.Certifications![0].Description);
+        Assert.Equal("CRFA1234", service.Request.Certifications[0].Registration);
+        Assert.Equal("+55 (11) 91234-5678", service.Request.Contacts![0].Value);
+        Assert.Equal("ana@example.com", service.Request.Contacts[1].Value);
+    }
+
+    [Fact]
+    public async Task Create_requires_at_least_one_valid_contact()
+    {
+        var service = new CapturingProfessionalRegistrationService();
+        var controller = CreateController(service);
+
+        var result = await controller.Create(
+            new CreateProfessionalViewModel
+            {
+                FullName = "Ana Silva",
+                Cpf = "52998224725",
+                Contacts = []
+            },
+            CancellationToken.None);
+
+        Assert.IsType<ViewResult>(result);
+        Assert.Null(service.Request);
+        Assert.Contains(
+            controller.ModelState[string.Empty]!.Errors,
+            error => error.ErrorMessage.Contains("ao menos um telefone", StringComparison.Ordinal));
+    }
+
+    private static ProfessionalController CreateController(
+        CapturingProfessionalRegistrationService service) =>
+        new(service)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
+
+    private sealed class CapturingProfessionalRegistrationService
+        : IProfessionalRegistrationService
+    {
+        public RegisterProfessionalRequest? Request { get; private set; }
+
+        public Task<ProfessionalRegistrationResult> RegisterAsync(
+            RegisterProfessionalRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            Request = request;
+            return Task.FromResult(ProfessionalRegistrationResult.Success(
+                new Professional { FullName = request.FullName!.Trim() }));
+        }
+    }
+}
