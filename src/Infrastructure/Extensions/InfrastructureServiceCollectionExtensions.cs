@@ -45,6 +45,9 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<ICid10CatalogImporter, Cid10CatalogImporter>();
         services.AddScoped<ICid10CatalogQueryService, Cid10CatalogQueryService>();
         services.AddScoped<IPatientRegistrationService, PatientRegistrationService>();
+        services.AddScoped<
+            IPatientProfessionalAssociationService,
+            PatientProfessionalAssociationService>();
         services.AddScoped<IProfessionalRegistrationService, ProfessionalRegistrationService>();
 
         return services;

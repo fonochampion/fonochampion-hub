@@ -29,6 +29,67 @@ public sealed class PatientRegistrationTests
     }
 
     [Fact]
+    public async Task RegisterAsync_associates_selected_professionals_with_patient()
+    {
+        await using var dbContext = CreateDbContext();
+        await AddCurrentCatalogEntryAsync(dbContext);
+        var firstProfessional = new Professional
+        {
+            FullName = "Ana Terapeuta",
+            Cpf = "12345678909"
+        };
+        var secondProfessional = new Professional
+        {
+            FullName = "Bruno Terapeuta",
+            Cpf = "98765432100"
+        };
+        dbContext.Professionals.AddRange(firstProfessional, secondProfessional);
+        await dbContext.SaveChangesAsync();
+        var service = new PatientRegistrationService(dbContext);
+
+        var result = await service.RegisterAsync(new RegisterPatientRequest(
+            "Maria Silva",
+            new DateOnly(1990, 5, 12),
+            "A00",
+            ProfessionalIds: [firstProfessional.Id, secondProfessional.Id]));
+
+        Assert.True(result.Succeeded);
+        var associations = await dbContext.PatientProfessionals
+            .OrderBy(association => association.ProfessionalId)
+            .ToListAsync();
+        Assert.Collection(
+            associations,
+            association =>
+            {
+                Assert.Equal(result.Patient!.Id, association.PatientId);
+                Assert.Equal(firstProfessional.Id, association.ProfessionalId);
+            },
+            association =>
+            {
+                Assert.Equal(result.Patient!.Id, association.PatientId);
+                Assert.Equal(secondProfessional.Id, association.ProfessionalId);
+            });
+    }
+
+    [Fact]
+    public async Task RegisterAsync_rejects_unknown_professional_ids_without_creating_patient()
+    {
+        await using var dbContext = CreateDbContext();
+        await AddCurrentCatalogEntryAsync(dbContext);
+        var service = new PatientRegistrationService(dbContext);
+
+        var result = await service.RegisterAsync(new RegisterPatientRequest(
+            "Maria Silva",
+            new DateOnly(1990, 5, 12),
+            "A00",
+            ProfessionalIds: [42]));
+
+        Assert.Equal(PatientRegistrationFailure.InvalidProfessional, result.Failure);
+        Assert.Empty(await dbContext.Patients.ToListAsync());
+        Assert.Empty(await dbContext.PatientProfessionals.ToListAsync());
+    }
+
+    [Fact]
     public async Task RegisterAsync_persists_multiple_responsible_persons_with_the_patient()
     {
         await using var dbContext = CreateDbContext();

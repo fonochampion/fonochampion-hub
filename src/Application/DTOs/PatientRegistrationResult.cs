@@ -12,7 +12,8 @@ public enum PatientRegistrationFailure
     MissingResponsiblePersonContact,
     InvalidResponsiblePersonContact,
     CatalogUnavailable,
-    InvalidCid10Code
+    InvalidCid10Code,
+    InvalidProfessional
 }
 
 public sealed record PatientRegistrationResult(

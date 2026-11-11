@@ -169,6 +169,21 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.ToTable("Patients", (string)null);
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.PatientProfessional", b =>
+                {
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProfessionalId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PatientId", "ProfessionalId");
+
+                    b.HasIndex("ProfessionalId");
+
+                    b.ToTable("PatientProfessionals", (string)null);
+                });
+
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.Professional", b =>
                 {
                     b.Property<int>("Id")
@@ -545,6 +560,25 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.Navigation("Cid10CatalogEntry");
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.PatientProfessional", b =>
+                {
+                    b.HasOne("FonoChampionHub.Domain.Entities.Patient", "Patient")
+                        .WithMany("PatientProfessionals")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FonoChampionHub.Domain.Entities.Professional", "Professional")
+                        .WithMany("PatientProfessionals")
+                        .HasForeignKey("ProfessionalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Professional");
+                });
+
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.ProfessionalCertification", b =>
                 {
                     b.HasOne("FonoChampionHub.Domain.Entities.Professional", "Professional")
@@ -652,6 +686,8 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.Patient", b =>
                 {
+                    b.Navigation("PatientProfessionals");
+
                     b.Navigation("ResponsiblePersons");
                 });
 
@@ -660,6 +696,8 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.Navigation("Certifications");
 
                     b.Navigation("Contacts");
+
+                    b.Navigation("PatientProfessionals");
                 });
 
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePerson", b =>
