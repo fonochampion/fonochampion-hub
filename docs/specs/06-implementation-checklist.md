@@ -24,7 +24,7 @@ When a new feature or approved scope change is specified, add its implementation
 
 Readiness is separate from status: keep the existing status values and mark an item ready only when its scope is sufficiently specified, all listed dependencies are `DONE`, and all relevant decision gates are resolved. Prioritize ready items with no dependencies before ready items whose dependencies are complete. Keep blocked items visible with the exact dependency or open decision that prevents implementation.
 
-IMP-001, IMP-002, IMP-003, IMP-004, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. In roadmap order, IMP-005 and IMP-018 are ready because their dependencies are complete and their decision gates are resolved. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
+IMP-001, IMP-002, IMP-003, IMP-004, IMP-005, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. IMP-018 and IMP-024 are ready because their dependencies are complete and their decision gates are resolved. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
 
 ## Phase 0 — Resolve specification gates
 
@@ -46,7 +46,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | DG-012 | RESOLVED — configurable reasons are `Não comparecimento`, `Indisponibilidade do profissional`, and `Solicitação do paciente/responsável`; fixed `Remarcação` remains automatic | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-034](./decisions/034-attendance-cancellation-reasons.md) |
 | DG-013 | RESOLVED — rescheduling removes inactive participants; if none remain, select active associated professionals or create associations from the active registry | [UC-008](./05-use-cases.md#uc-008--record-and-maintain-a-patient-attendance), [ADR-017](./decisions/017-scheduling-creates-professional-association.md) |
 | DG-014 | RESOLVED — display name is required, trimmed, and nonempty after trimming; email is optional, trimmed, and format-validated when provided, with no uniqueness or ownership verification | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles), [ADR-024](./decisions/024-system-user-account-field-rules.md) |
-| DG-015 | Password reset/recovery behavior and security requirements for its later delivery | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles) |
+| DG-015 | RESOLVED — Administrator-initiated reset uses a one-time temporary password displayed once, expires it after 24 hours, requires a change at next login, revokes existing sessions, clears failed-login lockout state, and leaves inactive accounts inactive; no email self-service | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles), [ADR-035](./decisions/035-administrator-initiated-password-reset.md) |
 | DG-016 | RESOLVED — matching existing Administrator accounts are left unchanged; account conflicts and a configured username that differs from an existing Administrator fail startup without creating or changing an account | [UC-009](./05-use-cases.md#uc-009--manage-system-user-accounts-and-roles), [ADR-023](./decisions/023-initial-administrator-bootstrap-lifecycle.md) |
 | DG-017 | RESOLVED — requester directs use of supplied files identified as SUS data without further source/version/terms research; use is internal only, and files/catalog data must not be committed, packaged, or redistributed | [Data and Integrations](./04-data-and-integrations.md#data), [ADR-026](./decisions/026-local-cid10-reference-catalog.md) |
 | DG-018 | RESOLVED — reject patient creation when normalized full name and date of birth match; trim leading/trailing whitespace, collapse internal whitespace, compare case-insensitively, and preserve accents and punctuation | [UC-001](./05-use-cases.md#uc-001--register-a-patient-and-record-anamnesis), [ADR-028](./decisions/028-patient-duplicate-detection.md) |
@@ -68,7 +68,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | ID | Feature | Depends on | Status |
 |---|---|---|---|
 | IMP-026 | Import the reusable, read-only Brazilian Portuguese CID-10 catalog from a local directory supplied in each environment through an explicit command; preserve its chapter/group/category/subcategory hierarchy and lookup by code or description; identify each file set by content fingerprint when no upstream version is available; exclude CID-O and do not commit, package, or redistribute the files or catalog data. | IMP-002 | DONE |
-| IMP-005 | Implement patient record creation with full name, required date of birth, and CID selected from the local catalog. | IMP-002, IMP-026 | PENDING |
+| IMP-005 | Implement patient record creation with full name, required date of birth, and CID selected from the local catalog. | IMP-002, IMP-026 | DONE |
 | IMP-016 | Record optional dated anamneses for patients, including the confirmed sections, separate entries, and preserved revision history. | IMP-005; DG-008 | BLOCKED |
 | IMP-006 | Register a responsible person with full name and degree of kinship and associate them with a patient. | IMP-005; DG-003 | BLOCKED |
 | IMP-007 | Register telephone and email contact details for a responsible person. | IMP-006; DG-004 | BLOCKED |
@@ -98,7 +98,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 
 | ID | Implementation item | Depends on | Status |
 |---|---|---|---|
-| IMP-024 | Add the Administrator-initiated password reset/recovery capability for system-user accounts. | IMP-020; DG-015 | BLOCKED |
+| IMP-024 | Add Administrator-initiated password reset for active or inactive system-user accounts: generate a temporary password displayed once and valid for 24 hours, require a password change at next login, revoke existing authenticated sessions, clear failed-login lockout state, preserve inactive status, and exclude email self-service recovery. | IMP-020; DG-015 | PENDING |
 
 ## Phase 6 — Agent guidance and skills
 

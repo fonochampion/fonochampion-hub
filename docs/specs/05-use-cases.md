@@ -285,13 +285,17 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 - A successful authentication resets the consecutive failed-login attempt count.
 - The three roles are fixed for the first implementation delivery; creating or editing role definitions and permissions is not included.
 - Password reset/recovery is deferred from the first implementation delivery.
+- For the later password-reset delivery, only an Administrator may initiate a reset. The system generates a temporary password, displays it once, expires it after 24 hours, and requires the user to change it at the next login.
+- Initiating a password reset immediately revokes the account's existing authenticated sessions and clears its consecutive failed-login counter and any active lockout.
+- An Administrator may reset an inactive account, but the reset does not reactivate it.
+- Password reset does not use email or provide self-service recovery; email ownership is not verified.
 - Account deletion is not specified in the initial scope.
-- Access-reset mechanics and account deletion remain open.
+- Account deletion behavior remains open.
 
 ## Open questions
 
 - Should username casing be preserved when displayed, or should a canonical case be used?
-- What access-reset/recovery mechanics and account-deletion behavior should be specified for a later delivery?
+- What account-deletion behavior should be specified for a later delivery?
 - What values are allowed for degree of kinship?
 - How should responsible-person names be normalized for duplicate rejection?
 - What lifecycle operations are required for patient, responsible-person, and contact records?

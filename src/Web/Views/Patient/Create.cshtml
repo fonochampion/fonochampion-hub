@@ -1,0 +1,48 @@
+@model CreatePatientViewModel
+@{
+    ViewData["Title"] = "Cadastrar paciente";
+}
+
+<h1 class="h2 mb-4">Cadastrar paciente</h1>
+
+<form asp-action="Create" method="post" class="form-layout">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label">Nome completo</label>
+        <input asp-for="FullName" class="form-control" autocomplete="name" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DateOfBirth" class="form-label">Data de nascimento</label>
+        <input asp-for="DateOfBirth" class="form-control" type="date" />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="cid-search" class="form-label">Buscar CID-10 por código ou descrição</label>
+        <input id="cid-search"
+               class="form-control"
+               type="search"
+               autocomplete="off"
+               data-search-url="@Url.Action("SearchCid", "Patient")"
+               aria-describedby="cid-search-status" />
+        <div id="cid-search-status" class="form-text" role="status" aria-live="polite">
+            Digite pelo menos 2 caracteres para buscar.
+        </div>
+        <div id="cid-search-results" class="list-group mt-2" aria-label="Resultados CID-10"></div>
+        <input asp-for="Cid10Code" type="hidden" />
+        <input asp-for="Cid10Description" type="hidden" />
+        <p id="cid-selected" class="mt-2 mb-0" aria-live="polite">
+            @if (!string.IsNullOrEmpty(Model.Cid10Code))
+            {
+                <span>CID selecionado: @Model.Cid10Code — @Model.Cid10Description</span>
+            }
+        </p>
+        <span asp-validation-for="Cid10Code" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Cadastrar paciente</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/patient-cid-search.js" asp-append-version="true"></script>
+}

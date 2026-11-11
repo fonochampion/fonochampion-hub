@@ -103,6 +103,39 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.ToTable("Cid10CatalogVersions", (string)null);
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Patient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cid10CatalogEntryId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedFullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Cid10CatalogEntryId");
+
+                    b.HasIndex("NormalizedFullName", "DateOfBirth")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Patients_NormalizedFullName_DateOfBirth");
+
+                    b.ToTable("Patients", (string)null);
+                });
+
             modelBuilder.Entity("FonoChampionHub.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -330,6 +363,17 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.Navigation("Parent");
 
                     b.Navigation("Version");
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Patient", b =>
+                {
+                    b.HasOne("FonoChampionHub.Domain.Entities.Cid10CatalogEntry", "Cid10CatalogEntry")
+                        .WithMany()
+                        .HasForeignKey("Cid10CatalogEntryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cid10CatalogEntry");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,0 +1,21 @@
+@model CreatedPatientViewModel
+@{
+    ViewData["Title"] = "Paciente cadastrado";
+}
+
+<div class="alert alert-success" role="status">
+    Paciente cadastrado com sucesso.
+</div>
+
+<h1 class="h2 mb-4">Paciente</h1>
+<dl class="row">
+    <dt class="col-sm-3">Nome completo</dt>
+    <dd class="col-sm-9">@Model.FullName</dd>
+    <dt class="col-sm-3">Data de nascimento</dt>
+    <dd class="col-sm-9">@Model.DateOfBirth.ToString("dd/MM/yyyy")</dd>
+    <dt class="col-sm-3">Idade</dt>
+    <dd class="col-sm-9">@Model.AgeDisplay</dd>
+    <dt class="col-sm-3">CID-10</dt>
+    <dd class="col-sm-9">@Model.Cid10Code — @Model.Cid10Description</dd>
+</dl>
+<a asp-action="Create" class="btn btn-primary">Cadastrar outro paciente</a>
