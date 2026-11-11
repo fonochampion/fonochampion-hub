@@ -1,0 +1,15 @@
+@model CreatedProfessionalViewModel
+@{
+    ViewData["Title"] = "Profissional cadastrado";
+}
+
+<div class="alert alert-success" role="status">
+    Profissional cadastrado com sucesso.
+</div>
+
+<h1 class="h2 mb-4">Profissional</h1>
+<dl class="row">
+    <dt class="col-sm-3">Nome completo</dt>
+    <dd class="col-sm-9">@Model.FullName</dd>
+</dl>
+<a asp-action="Create" class="btn btn-primary">Cadastrar outro profissional</a>

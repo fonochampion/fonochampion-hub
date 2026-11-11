@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FonoChampionHub.Domain.Enums;
 
-public enum ResponsiblePersonContactType
+public enum ContactMethodType
 {
     [Display(Name = "Telefone")]
     Telephone,

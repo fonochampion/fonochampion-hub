@@ -14,5 +14,5 @@ public sealed record RegisterResponsiblePersonRequest(
     IReadOnlyList<RegisterResponsiblePersonContactRequest>? Contacts = null);
 
 public sealed record RegisterResponsiblePersonContactRequest(
-    ResponsiblePersonContactType Type,
+    ContactMethodType Type,
     string? Value);

@@ -1,7 +1,7 @@
 # Initial-Stage Use Cases
 
 **Status:** Draft
-**Last reviewed:** 2026-10-31
+**Last reviewed:** 2026-11-11
 
 ## Scope
 
@@ -130,10 +130,13 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 **Acceptance criteria:**
 
 - The initial supported professional type is fonoaudiólogo. Support for other professional types is not part of the current scope.
-- The professional's required basic fields are full name and CPF. CPF is required, must be valid, and defines professional uniqueness; a duplicate is rejected.
+- The professional's required basic fields are full name and CPF. CPF is required, must pass check-digit validation, and defines professional uniqueness; a duplicate is rejected after normalization.
+- CPF input accepts 11 digits or the standard `000.000.000-00` punctuation. The system stores and compares only its 11 digits.
 - A certification has a description, an alphanumeric registration, and a completion date.
+- A certification completion date cannot be in the future.
 - Professional contact types include telephone and email.
 - Certifications are optional and may have multiple entries. At least one telephone or email is required; multiple values of either type are allowed, and contacts must pass format validation.
+- Telephone contacts use the Brazilian DDD and subscriber number format (10 or 11 digits); `+55` is optional, and spaces, parentheses, and hyphens are accepted. Email contacts must pass syntax validation. Contact values are trimmed at their boundaries, are not otherwise normalized, and are not verified for ownership.
 - Which professional fields can be changed and how certifications and contacts are individually maintained remain to be defined.
 - Professional-council registration data is planned to be retrieved from a public API in a later stage. No API is selected, and that integration is not part of this use case's current implementation.
 
@@ -296,7 +299,6 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 - What access-reset/recovery mechanics and account-deletion behavior should be specified for a later delivery?
 - What lifecycle operations are required for patient, responsible-person, and contact records?
 - What consent, privacy, retention, and deletion rules apply to these records?
-- Which specific validation and normalization rules apply to CPF, telephone, and email?
 - Which fields can be changed when modifying a professional? How are certifications and contacts added, changed, or removed?
 - What privacy, legal, retention, and data-handling requirements apply to anamnesis beyond the defined role-based access?
 - Which public API will provide professional council-registration information, and what data and integration behavior will it support?

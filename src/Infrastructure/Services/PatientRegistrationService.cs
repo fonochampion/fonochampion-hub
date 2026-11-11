@@ -2,6 +2,7 @@ using FonoChampionHub.Application.DTOs;
 using FonoChampionHub.Application.Interfaces;
 using FonoChampionHub.Domain.Entities;
 using FonoChampionHub.Domain.Enums;
+using FonoChampionHub.Domain.Services;
 using FonoChampionHub.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -74,10 +75,10 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
                 var contactValue = contactRequest.Value.Trim();
                 var isValid = contactRequest.Type switch
                 {
-                    ResponsiblePersonContactType.Telephone =>
-                        ResponsiblePersonContact.IsValidBrazilianTelephone(contactValue),
-                    ResponsiblePersonContactType.Email =>
-                        ResponsiblePersonContact.IsValidEmailAddress(contactValue),
+                    ContactMethodType.Telephone =>
+                        ContactValueValidator.IsValidBrazilianTelephone(contactValue),
+                    ContactMethodType.Email =>
+                        ContactValueValidator.IsValidEmailAddress(contactValue),
                     _ => false
                 };
                 if (!isValid)

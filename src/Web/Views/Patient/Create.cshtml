@@ -93,7 +93,7 @@
                                                    class="form-label">Tipo</label>
                                             <select asp-for="ResponsiblePersons[index].Contacts[contactIndex].Type"
                                                     data-contact-input="Type"
-                                                    asp-items="Html.GetEnumSelectList<ResponsiblePersonContactType>()"
+                                                    asp-items="Html.GetEnumSelectList<ContactMethodType>()"
                                                     class="form-select">
                                                 <option value="">Selecione</option>
                                             </select>
@@ -188,7 +188,7 @@
                             <label data-contact-label="Type" class="form-label">Tipo</label>
                             <select data-contact-input="Type" class="form-select">
                                 <option value="">Selecione</option>
-                                @foreach (var option in Html.GetEnumSelectList<ResponsiblePersonContactType>())
+                                @foreach (var option in Html.GetEnumSelectList<ContactMethodType>())
                                 {
                                     <option value="@option.Value">@option.Text</option>
                                 }
@@ -225,7 +225,7 @@
             <label data-contact-label="Type" class="form-label">Tipo</label>
             <select data-contact-input="Type" class="form-select">
                 <option value="">Selecione</option>
-                @foreach (var option in Html.GetEnumSelectList<ResponsiblePersonContactType>())
+                @foreach (var option in Html.GetEnumSelectList<ContactMethodType>())
                 {
                     <option value="@option.Value">@option.Text</option>
                 }
