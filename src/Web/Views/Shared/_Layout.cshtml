@@ -34,6 +34,11 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="UserManagement" asp-action="Index">Contas</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="CancellationReasons" asp-action="Index">
+                                        Motivos de cancelamento
+                                    </a>
+                                </li>
                             }
                             @if (User.Identity?.IsAuthenticated == true)
                             {
