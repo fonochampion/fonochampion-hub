@@ -39,6 +39,7 @@ Start with [000-template.md](./000-template.md). When recording a decision, incl
 - [032 — Professional deletion lifecycle](./032-professional-deletion-lifecycle.md)
 - [033 — Anamnesis revision and clinical-data gate](./033-anamnesis-revision-and-clinical-data-gate.md)
 - [034 — Attendance cancellation reasons](./034-attendance-cancellation-reasons.md)
+- [035 — Professional record maintenance](./035-professional-record-maintenance.md)
 
 ## Superseded decisions
 
