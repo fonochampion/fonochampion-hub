@@ -9,6 +9,11 @@ namespace FonoChampionHub.Infrastructure.Services;
 
 public sealed class Cid10CatalogQueryService(ApplicationDbContext dbContext) : ICid10CatalogQueryService
 {
+    public Task<bool> HasCurrentCatalogAsync(CancellationToken cancellationToken = default) =>
+        dbContext.Cid10CatalogVersions
+            .AsNoTracking()
+            .AnyAsync(version => version.IsCurrent, cancellationToken);
+
     public async Task<IReadOnlyList<Cid10CatalogSearchResult>> SearchAsync(
         string query,
         CancellationToken cancellationToken = default)
