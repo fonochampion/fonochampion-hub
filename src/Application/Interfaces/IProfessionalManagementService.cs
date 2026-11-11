@@ -7,6 +7,15 @@ public interface IProfessionalManagementService
     Task<IReadOnlyList<ProfessionalListItem>> GetProfessionalsAsync(
         CancellationToken cancellationToken = default);
 
+    Task<ProfessionalDetails?> GetProfessionalForEditAsync(
+        int professionalId,
+        CancellationToken cancellationToken = default);
+
+    Task<ProfessionalManagementResult> UpdateAsync(
+        int professionalId,
+        UpdateProfessionalRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<ProfessionalManagementResult> SetActiveAsync(
         int professionalId,
         bool isActive,

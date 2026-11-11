@@ -35,6 +35,40 @@ public sealed class ProfessionalController(
     [HttpGet]
     public IActionResult Create() => View(new CreateProfessionalViewModel());
 
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
+    {
+        var professional = await professionalManagementService.GetProfessionalForEditAsync(
+            id,
+            cancellationToken);
+        if (professional is null)
+        {
+            return NotFound();
+        }
+
+        return View(new EditProfessionalViewModel
+        {
+            Id = professional.Id,
+            FullName = professional.FullName,
+            Cpf = professional.Cpf,
+            Certifications = professional.Certifications.Select(certification =>
+                new ProfessionalCertificationInputViewModel
+                {
+                    Id = certification.Id,
+                    Description = certification.Description,
+                    Registration = certification.Registration,
+                    CompletionDate = certification.CompletionDate
+                }).ToList(),
+            Contacts = professional.Contacts.Select(contact =>
+                new ProfessionalContactInputViewModel
+                {
+                    Id = contact.Id,
+                    Type = contact.Type,
+                    Value = contact.Value
+                }).ToList()
+        });
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public Task<IActionResult> Inactivate(int id, CancellationToken cancellationToken) =>
@@ -75,24 +109,135 @@ public sealed class ProfessionalController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(
+        int id,
+        EditProfessionalViewModel model,
+        CancellationToken cancellationToken)
+    {
+        model.Id = id;
+        if (!ValidateProfessionalForm(model))
+        {
+            return View(model);
+        }
+
+        var result = await professionalManagementService.UpdateAsync(
+            id,
+            new UpdateProfessionalRequest(
+                model.FullName?.Trim(),
+                model.Cpf?.Trim(),
+                model.Certifications
+                    .Where(HasCertificationInput)
+                    .Select(certification => new UpdateProfessionalCertificationRequest(
+                        certification.Id,
+                        certification.Description?.Trim(),
+                        certification.Registration?.Trim(),
+                        certification.CompletionDate))
+                    .ToArray(),
+                model.Contacts
+                    .Where(HasContactInput)
+                    .Select(contact => new UpdateProfessionalContactRequest(
+                        contact.Id,
+                        contact.Type,
+                        contact.Value?.Trim()))
+                    .ToArray()),
+            cancellationToken);
+
+        if (result.Failure is { } failure)
+        {
+            if (failure is ProfessionalManagementFailure.ProfessionalNotFound or
+                ProfessionalManagementFailure.ProfessionalAlreadyDeleted)
+            {
+                return NotFound();
+            }
+
+            AddProfessionalManagementError(failure);
+            return View(model);
+        }
+
+        TempData["ProfessionalNotice"] = "Profissional atualizado.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
         CreateProfessionalViewModel model,
         CancellationToken cancellationToken)
     {
+        if (!ValidateProfessionalForm(model))
+        {
+            return View(model);
+        }
+
+        var certificationRequests = model.Certifications
+            .Where(HasCertificationInput)
+            .Select(certification => new RegisterProfessionalCertificationRequest(
+                certification.Description?.Trim(),
+                certification.Registration?.Trim(),
+                certification.CompletionDate))
+            .ToArray();
+        var contactRequests = model.Contacts
+            .Where(HasContactInput)
+            .Select(contact => new RegisterProfessionalContactRequest(
+                contact.Type,
+                contact.Value?.Trim()))
+            .ToArray();
+        var result = await professionalRegistrationService.RegisterAsync(
+            new RegisterProfessionalRequest(
+                model.FullName!.Trim(),
+                model.Cpf!.Trim(),
+                certificationRequests,
+                contactRequests),
+            cancellationToken);
+
+        if (!result.Succeeded)
+        {
+            AddRegistrationError(result.Failure);
+            return View(model);
+        }
+
+        var professional = result.Professional
+            ?? throw new InvalidOperationException(
+                "Successful professional registration returned no professional.");
+
+        Response.Headers.CacheControl = "no-store";
+        Response.Headers.Pragma = "no-cache";
+        return View("Created", new CreatedProfessionalViewModel
+        {
+            FullName = professional.FullName
+        });
+    }
+
+    private bool ValidateProfessionalForm(ProfessionalFormViewModel model)
+    {
         model.Certifications ??= [];
         model.Contacts ??= [];
-        var fullName = model.FullName?.Trim() ?? string.Empty;
-        var today = DateOnly.FromDateTime(DateTime.Today);
 
-        var certificationRequests = new List<RegisterProfessionalCertificationRequest>();
-        var certificationInputs = model.Certifications ?? [];
-        for (var index = 0; index < certificationInputs.Count; index++)
+        if (string.IsNullOrWhiteSpace(model.FullName))
         {
-            var input = certificationInputs[index];
+            ModelState.AddModelError(
+                nameof(model.FullName),
+                "Informe o nome completo.");
+        }
+
+        if (string.IsNullOrWhiteSpace(model.Cpf) ||
+            BrazilianCpfValidator.NormalizeAndValidate(model.Cpf) is null)
+        {
+            ModelState.AddModelError(
+                nameof(model.Cpf),
+                "Informe um CPF válido.");
+        }
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        for (var index = 0; index < model.Certifications.Count; index++)
+        {
+            var input = model.Certifications[index];
             var description = input.Description?.Trim() ?? string.Empty;
             var registration = input.Registration?.Trim() ?? string.Empty;
-            var hasCompletionDate = input.CompletionDate is not null;
-            if (description.Length == 0 && registration.Length == 0 && !hasCompletionDate)
+            if (input.Id is null &&
+                description.Length == 0 &&
+                registration.Length == 0 &&
+                input.CompletionDate is null)
             {
                 continue;
             }
@@ -123,27 +268,14 @@ public sealed class ProfessionalController(
                     $"Certifications[{index}].CompletionDate",
                     "A data de conclusão não pode estar no futuro.");
             }
-
-            if (description.Length > 0 &&
-                registration.Length > 0 &&
-                registration.All(char.IsLetterOrDigit) &&
-                input.CompletionDate is { } validCompletionDate &&
-                validCompletionDate <= today)
-            {
-                certificationRequests.Add(new RegisterProfessionalCertificationRequest(
-                    description,
-                    registration,
-                    validCompletionDate));
-            }
         }
 
-        var contactRequests = new List<RegisterProfessionalContactRequest>();
-        var contactInputs = model.Contacts ?? [];
-        for (var index = 0; index < contactInputs.Count; index++)
+        var validContactCount = 0;
+        for (var index = 0; index < model.Contacts.Count; index++)
         {
-            var input = contactInputs[index];
+            var input = model.Contacts[index];
             var value = input.Value?.Trim() ?? string.Empty;
-            if (input.Type is null && value.Length == 0)
+            if (input.Id is null && input.Type is null && value.Length == 0)
             {
                 continue;
             }
@@ -184,50 +316,31 @@ public sealed class ProfessionalController(
                 }
                 else
                 {
-                    contactRequests.Add(new RegisterProfessionalContactRequest(
-                        contactType,
-                        value));
+                    validContactCount++;
                 }
             }
         }
 
-        if (contactRequests.Count == 0)
+        if (validContactCount == 0)
         {
             ModelState.AddModelError(
                 string.Empty,
                 "Informe ao menos um telefone ou e-mail válido para o profissional.");
         }
 
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
-
-        var result = await professionalRegistrationService.RegisterAsync(
-            new RegisterProfessionalRequest(
-                fullName,
-                model.Cpf?.Trim(),
-                certificationRequests,
-                contactRequests),
-            cancellationToken);
-
-        if (!result.Succeeded)
-        {
-            AddRegistrationError(result.Failure);
-            return View(model);
-        }
-
-        var professional = result.Professional
-            ?? throw new InvalidOperationException(
-                "Successful professional registration returned no professional.");
-
-        Response.Headers.CacheControl = "no-store";
-        Response.Headers.Pragma = "no-cache";
-        return View("Created", new CreatedProfessionalViewModel
-        {
-            FullName = professional.FullName
-        });
+        return ModelState.IsValid;
     }
+
+    private static bool HasCertificationInput(ProfessionalCertificationInputViewModel input) =>
+        input.Id is not null ||
+        !string.IsNullOrWhiteSpace(input.Description) ||
+        !string.IsNullOrWhiteSpace(input.Registration) ||
+        input.CompletionDate is not null;
+
+    private static bool HasContactInput(ProfessionalContactInputViewModel input) =>
+        input.Id is not null ||
+        input.Type is not null ||
+        !string.IsNullOrWhiteSpace(input.Value);
 
     private void AddRegistrationError(ProfessionalRegistrationFailure? failure)
     {
@@ -250,6 +363,29 @@ public sealed class ProfessionalController(
                 $"Unsupported professional registration failure: {failure}.")
         };
 
+        ModelState.AddModelError(key, message);
+    }
+
+    private void AddProfessionalManagementError(ProfessionalManagementFailure failure)
+    {
+        var (key, message) = failure switch
+        {
+            ProfessionalManagementFailure.InvalidFullName =>
+                (nameof(EditProfessionalViewModel.FullName), "Informe um nome completo válido."),
+            ProfessionalManagementFailure.InvalidCpf =>
+                (nameof(EditProfessionalViewModel.Cpf), "Informe um CPF válido."),
+            ProfessionalManagementFailure.DuplicateCpf =>
+                (nameof(EditProfessionalViewModel.Cpf),
+                    "Já existe um profissional cadastrado com esse CPF."),
+            ProfessionalManagementFailure.InvalidCertification =>
+                (string.Empty, "Confira os dados das certificações informadas."),
+            ProfessionalManagementFailure.MissingContact =>
+                (string.Empty, "Informe ao menos um telefone ou e-mail para o profissional."),
+            ProfessionalManagementFailure.InvalidContact =>
+                (string.Empty, "Informe um telefone brasileiro ou e-mail válido."),
+            _ => throw new InvalidOperationException(
+                $"Unsupported professional management failure: {failure}.")
+        };
         ModelState.AddModelError(key, message);
     }
 

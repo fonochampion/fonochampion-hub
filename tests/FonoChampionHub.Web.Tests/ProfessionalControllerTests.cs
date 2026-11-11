@@ -81,6 +81,120 @@ public sealed class ProfessionalControllerTests
     }
 
     [Fact]
+    public async Task Edit_posts_individual_certification_and_contact_changes()
+    {
+        var managementService = new CapturingProfessionalManagementService();
+        var controller = CreateController(
+            new CapturingProfessionalRegistrationService(),
+            managementService);
+
+        var result = await controller.Edit(
+            42,
+            new EditProfessionalViewModel
+            {
+                FullName = " Ana Silva ",
+                Cpf = " 529.982.247-25 ",
+                Certifications =
+            [
+                new ProfessionalCertificationInputViewModel
+                {
+                    Id = 11,
+                    Description = " Linguagem ",
+                    Registration = " CRFA1234 ",
+                    CompletionDate = new DateOnly(2024, 3, 10)
+                },
+                new ProfessionalCertificationInputViewModel
+                {
+                    Description = "Voz",
+                    Registration = "VOZ2",
+                    CompletionDate = new DateOnly(2023, 6, 20)
+                }
+            ],
+                Contacts =
+            [
+                new ProfessionalContactInputViewModel
+                {
+                    Id = 7,
+                    Type = ContactMethodType.Email,
+                    Value = " ana@example.com "
+                }
+            ]
+            },
+            CancellationToken.None);
+
+        var redirect = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Index", redirect.ActionName);
+        Assert.Equal(42, managementService.UpdatedProfessionalId);
+        Assert.Equal("Ana Silva", managementService.UpdateRequest!.FullName);
+        Assert.Equal("529.982.247-25", managementService.UpdateRequest.Cpf);
+        Assert.Equal(11, managementService.UpdateRequest.Certifications![0].Id);
+        Assert.Equal("Linguagem", managementService.UpdateRequest.Certifications[0].Description);
+        Assert.Null(managementService.UpdateRequest.Certifications[1].Id);
+        Assert.Equal(7, managementService.UpdateRequest.Contacts![0].Id);
+        Assert.Equal("ana@example.com", managementService.UpdateRequest.Contacts[0].Value);
+    }
+
+    [Fact]
+    public async Task Edit_loads_professional_details_into_the_form()
+    {
+        var managementService = new CapturingProfessionalManagementService
+        {
+            Details = new ProfessionalDetails(
+                42,
+                "Ana Silva",
+                "52998224725",
+                [
+                    new ProfessionalCertificationDetails(
+                        11,
+                        "Linguagem",
+                        "CRFA1234",
+                        new DateOnly(2024, 3, 10))
+                ],
+                [
+                    new ProfessionalContactDetails(
+                        7,
+                        ContactMethodType.Email,
+                        "ana@example.com")
+                ])
+        };
+        var controller = CreateController(
+            new CapturingProfessionalRegistrationService(),
+            managementService);
+
+        var result = await controller.Edit(42, CancellationToken.None);
+
+        var view = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<EditProfessionalViewModel>(view.Model);
+        Assert.Equal("Ana Silva", model.FullName);
+        Assert.Equal(11, Assert.Single(model.Certifications).Id);
+        Assert.Equal(7, Assert.Single(model.Contacts).Id);
+    }
+
+    [Fact]
+    public async Task Edit_preserves_the_route_id_when_validation_fails()
+    {
+        var managementService = new CapturingProfessionalManagementService();
+        var controller = CreateController(
+            new CapturingProfessionalRegistrationService(),
+            managementService);
+
+        var result = await controller.Edit(
+            42,
+            new EditProfessionalViewModel
+            {
+                FullName = "Ana Silva",
+                Cpf = "52998224725",
+                Contacts = []
+            },
+            CancellationToken.None);
+
+        var view = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<EditProfessionalViewModel>(view.Model);
+        Assert.Equal(42, model.Id);
+        Assert.Null(managementService.UpdateRequest);
+    }
+
+    [Fact]
     public async Task Inactivate_sets_professional_inactive_and_returns_to_list()
     {
         var managementService = new CapturingProfessionalManagementService();
@@ -144,6 +258,12 @@ public sealed class ProfessionalControllerTests
     private sealed class CapturingProfessionalManagementService
         : IProfessionalManagementService
     {
+        public ProfessionalDetails? Details { get; set; }
+
+        public int? UpdatedProfessionalId { get; private set; }
+
+        public UpdateProfessionalRequest? UpdateRequest { get; private set; }
+
         public int? ProfessionalId { get; private set; }
 
         public bool IsActive { get; private set; }
@@ -153,6 +273,21 @@ public sealed class ProfessionalControllerTests
         public Task<IReadOnlyList<ProfessionalListItem>> GetProfessionalsAsync(
             CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<ProfessionalListItem>>([]);
+
+        public Task<ProfessionalDetails?> GetProfessionalForEditAsync(
+            int professionalId,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(Details);
+
+        public Task<ProfessionalManagementResult> UpdateAsync(
+            int professionalId,
+            UpdateProfessionalRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            UpdatedProfessionalId = professionalId;
+            UpdateRequest = request;
+            return Task.FromResult(ProfessionalManagementResult.Success());
+        }
 
         public Task<ProfessionalManagementResult> SetActiveAsync(
             int professionalId,
