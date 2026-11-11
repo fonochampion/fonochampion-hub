@@ -9,6 +9,8 @@ public enum PatientRegistrationFailure
     DuplicatePatient,
     InvalidResponsiblePerson,
     DuplicateResponsiblePerson,
+    MissingResponsiblePersonContact,
+    InvalidResponsiblePersonContact,
     CatalogUnavailable,
     InvalidCid10Code
 }

@@ -200,6 +200,31 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.ToTable("ResponsiblePersons", (string)null);
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePersonContact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ResponsiblePersonId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResponsiblePersonId");
+
+                    b.ToTable("ResponsiblePersonContacts", (string)null);
+                });
+
             modelBuilder.Entity("FonoChampionHub.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -451,6 +476,17 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePersonContact", b =>
+                {
+                    b.HasOne("FonoChampionHub.Domain.Entities.ResponsiblePerson", "ResponsiblePerson")
+                        .WithMany("Contacts")
+                        .HasForeignKey("ResponsiblePersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ResponsiblePerson");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -515,6 +551,11 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.Patient", b =>
                 {
                     b.Navigation("ResponsiblePersons");
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePerson", b =>
+                {
+                    b.Navigation("Contacts");
                 });
 #pragma warning restore 612, 618
         }

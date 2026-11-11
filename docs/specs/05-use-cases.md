@@ -108,8 +108,10 @@ The patient/responsible-person hierarchy and the attributes listed in the use ca
 
 - Contact information can be associated with the relevant responsible-person record.
 - The confirmed contact types are telephone and email.
-- At least one telephone or email is required. Multiple values of either type are allowed; no preferred contact is defined.
-- Contact values must pass format validation.
+- At least one telephone or email is required for each responsible person. Multiple values of either type are allowed; no preferred contact is defined.
+- A telephone number has a Brazilian DDD and subscriber number (10 or 11 digits); the `+55` country prefix is optional. Spaces, parentheses, and hyphens may be used as separators.
+- Email addresses must pass syntax validation.
+- Contact values are trimmed at their boundaries. Ownership is not verified, and contact values are not otherwise normalized.
 
 ### UC-004 — Register a professional
 

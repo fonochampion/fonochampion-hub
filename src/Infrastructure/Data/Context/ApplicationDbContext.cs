@@ -16,6 +16,9 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<ResponsiblePerson> ResponsiblePersons => Set<ResponsiblePerson>();
 
+    public DbSet<ResponsiblePersonContact> ResponsiblePersonContacts =>
+        Set<ResponsiblePersonContact>();
+
     public DbSet<AttendanceCancellationReason> AttendanceCancellationReasons =>
         Set<AttendanceCancellationReason>();
 

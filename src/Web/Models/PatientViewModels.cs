@@ -26,6 +26,16 @@ public sealed class ResponsiblePersonInputViewModel
     public string? FullName { get; set; }
 
     public ResponsiblePersonKinship? Kinship { get; set; }
+
+    public List<ResponsiblePersonContactInputViewModel> Contacts { get; set; } =
+        [new ResponsiblePersonContactInputViewModel()];
+}
+
+public sealed class ResponsiblePersonContactInputViewModel
+{
+    public ResponsiblePersonContactType? Type { get; set; }
+
+    public string? Value { get; set; }
 }
 
 public sealed class CreatedPatientViewModel

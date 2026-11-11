@@ -20,6 +20,9 @@ public sealed class ResponsiblePerson
 
     public Patient Patient { get; set; } = null!;
 
+    public ICollection<ResponsiblePersonContact> Contacts { get; set; } =
+        new List<ResponsiblePersonContact>();
+
     public static string NormalizeFullNameForComparison(string fullName) =>
         FullNameNormalizer.NormalizeForComparison(fullName);
 }

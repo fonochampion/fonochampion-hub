@@ -1,50 +1,67 @@
 (() => {
     const list = document.getElementById("responsible-person-list");
     const addButton = document.getElementById("add-responsible-person");
-    const template = document.getElementById("responsible-person-template");
+    const personTemplate = document.getElementById("responsible-person-template");
+    const contactTemplate = document.getElementById("responsible-person-contact-template");
 
-    if (!list || !addButton || !(template instanceof HTMLTemplateElement)) {
+    if (!list ||
+        !addButton ||
+        !(personTemplate instanceof HTMLTemplateElement) ||
+        !(contactTemplate instanceof HTMLTemplateElement)) {
         return;
     }
 
     const updateIndexes = () => {
-        const rows = list.querySelectorAll("[data-responsible-person-row]");
-        rows.forEach((row, index) => {
-            for (const input of row.querySelectorAll("[data-responsible-person-input]")) {
+        const personRows = list.querySelectorAll("[data-responsible-person-row]");
+        personRows.forEach((personRow, personIndex) => {
+            for (const input of personRow.querySelectorAll("[data-responsible-person-input]")) {
                 const field = input.dataset.responsiblePersonInput;
-                input.name = `ResponsiblePersons[${index}].${field}`;
-                input.id = `ResponsiblePersons_${index}__${field}`;
+                input.name = `ResponsiblePersons[${personIndex}].${field}`;
+                input.id = `ResponsiblePersons_${personIndex}__${field}`;
             }
 
-            for (const label of row.querySelectorAll("[data-responsible-person-label]")) {
+            for (const label of personRow.querySelectorAll("[data-responsible-person-label]")) {
                 const field = label.dataset.responsiblePersonLabel;
-                label.htmlFor = `ResponsiblePersons_${index}__${field}`;
+                label.htmlFor = `ResponsiblePersons_${personIndex}__${field}`;
             }
 
-            for (const validation of row.querySelectorAll("[data-responsible-person-validation]")) {
+            for (const validation of personRow.querySelectorAll("[data-responsible-person-validation]")) {
                 const field = validation.dataset.responsiblePersonValidation;
                 validation.setAttribute(
                     "data-valmsg-for",
-                    `ResponsiblePersons[${index}].${field}`);
+                    `ResponsiblePersons[${personIndex}].${field}`);
             }
+
+            const contactRows = personRow.querySelectorAll(
+                "[data-responsible-person-contact-row]");
+            contactRows.forEach((contactRow, contactIndex) => {
+                for (const input of contactRow.querySelectorAll("[data-contact-input]")) {
+                    const field = input.dataset.contactInput;
+                    input.name =
+                        `ResponsiblePersons[${personIndex}].Contacts[${contactIndex}].${field}`;
+                    input.id =
+                        `ResponsiblePersons_${personIndex}__Contacts_${contactIndex}__${field}`;
+                }
+
+                for (const label of contactRow.querySelectorAll("[data-contact-label]")) {
+                    const field = label.dataset.contactLabel;
+                    label.htmlFor =
+                        `ResponsiblePersons_${personIndex}__Contacts_${contactIndex}__${field}`;
+                }
+
+                for (const validation of contactRow.querySelectorAll("[data-contact-validation]")) {
+                    const field = validation.dataset.contactValidation;
+                    validation.setAttribute(
+                        "data-valmsg-for",
+                        `ResponsiblePersons[${personIndex}].Contacts[${contactIndex}].${field}`);
+                }
+            });
         });
-        list.dataset.nextIndex = String(rows.length);
     };
 
     updateIndexes();
     addButton.addEventListener("click", () => {
-        const row = template.content.cloneNode(true);
-        for (const element of row.querySelectorAll("*")) {
-            for (const attribute of ["name", "id", "for", "data-valmsg-for"]) {
-                if (element.hasAttribute(attribute)) {
-                    element.setAttribute(
-                        attribute,
-                        element.getAttribute(attribute).replaceAll("__index__", String(nextIndex)));
-                }
-            }
-        }
-
-        list.append(row);
+        list.append(personTemplate.content.cloneNode(true));
         updateIndexes();
     });
 
@@ -53,8 +70,28 @@
             return;
         }
 
-        const removeButton = event.target.closest("[data-remove-responsible-person]");
-        removeButton?.closest("[data-responsible-person-row]")?.remove();
+        const addContactButton = event.target.closest("[data-add-responsible-person-contact]");
+        if (addContactButton) {
+            const personRow = addContactButton.closest("[data-responsible-person-row]");
+            const contactList = personRow?.querySelector(
+                "[data-responsible-person-contact-list]");
+            if (contactList) {
+                contactList.append(contactTemplate.content.cloneNode(true));
+            }
+            updateIndexes();
+            return;
+        }
+
+        const removeContactButton = event.target.closest(
+            "[data-remove-responsible-person-contact]");
+        if (removeContactButton) {
+            removeContactButton.closest("[data-responsible-person-contact-row]")?.remove();
+            updateIndexes();
+            return;
+        }
+
+        const removePersonButton = event.target.closest("[data-remove-responsible-person]");
+        removePersonButton?.closest("[data-responsible-person-row]")?.remove();
         updateIndexes();
     });
 })();
