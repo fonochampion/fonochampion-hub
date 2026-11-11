@@ -96,6 +96,22 @@ public sealed class ProfessionalControllerTests
         Assert.False(managementService.IsActive);
     }
 
+    [Fact]
+    public async Task Delete_marks_professional_deleted_and_returns_to_list()
+    {
+        var managementService = new CapturingProfessionalManagementService();
+        var controller = CreateController(
+            new CapturingProfessionalRegistrationService(),
+            managementService);
+
+        var result = await controller.Delete(42, CancellationToken.None);
+
+        var redirect = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Index", redirect.ActionName);
+        Assert.Equal(42, managementService.DeletedProfessionalId);
+        Assert.Equal("Profissional excluído.", controller.TempData["ProfessionalNotice"]);
+    }
+
     private static ProfessionalController CreateController(
         CapturingProfessionalRegistrationService service,
         CapturingProfessionalManagementService? managementService = null) =>
@@ -132,6 +148,8 @@ public sealed class ProfessionalControllerTests
 
         public bool IsActive { get; private set; }
 
+        public int? DeletedProfessionalId { get; private set; }
+
         public Task<IReadOnlyList<ProfessionalListItem>> GetProfessionalsAsync(
             CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<ProfessionalListItem>>([]);
@@ -143,6 +161,14 @@ public sealed class ProfessionalControllerTests
         {
             ProfessionalId = professionalId;
             IsActive = isActive;
+            return Task.FromResult(ProfessionalManagementResult.Success());
+        }
+
+        public Task<ProfessionalManagementResult> DeleteAsync(
+            int professionalId,
+            CancellationToken cancellationToken = default)
+        {
+            DeletedProfessionalId = professionalId;
             return Task.FromResult(ProfessionalManagementResult.Success());
         }
     }

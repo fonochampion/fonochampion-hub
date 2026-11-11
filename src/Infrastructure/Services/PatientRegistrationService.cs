@@ -112,6 +112,7 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
         var professionals = await dbContext.Professionals
             .Where(professional =>
                 professional.IsActive &&
+                !professional.IsDeleted &&
                 professionalIds.Contains(professional.Id))
             .ToListAsync(cancellationToken);
         if (professionals.Count != professionalIds.Length)

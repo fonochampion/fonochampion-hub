@@ -59,6 +59,7 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
             .AsNoTracking()
             .Where(professional =>
                 professional.IsActive &&
+                !professional.IsDeleted &&
                 !associatedIds.Contains(professional.Id))
             .OrderBy(professional => professional.FullName)
             .Select(professional => new ProfessionalOption(
@@ -81,7 +82,8 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
             .AsNoTracking()
             .Where(association =>
                 association.PatientId == patientId &&
-                association.Professional.IsActive)
+                association.Professional.IsActive &&
+                !association.Professional.IsDeleted)
             .OrderBy(association => association.Professional.FullName)
             .Select(association => new ProfessionalOption(
                 association.ProfessionalId,
@@ -123,6 +125,7 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
         var professionals = await dbContext.Professionals
             .Where(professional =>
                 professional.IsActive &&
+                !professional.IsDeleted &&
                 ids.Contains(professional.Id))
             .ToListAsync(cancellationToken);
         if (professionals.Count != ids.Length)
@@ -176,13 +179,14 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
         var associatedIds = await dbContext.PatientProfessionals
             .Where(association =>
                 association.PatientId == patientId &&
-                association.Professional.IsActive)
+                association.Professional.IsActive &&
+                !association.Professional.IsDeleted)
             .Select(association => association.ProfessionalId)
             .ToListAsync(cancellationToken);
         var allowedIds = associatedIds.Count > 0
             ? associatedIds
             : await dbContext.Professionals
-                .Where(professional => professional.IsActive)
+                .Where(professional => professional.IsActive && !professional.IsDeleted)
                 .Select(professional => professional.Id)
                 .ToListAsync(cancellationToken);
         var allowedIdSet = allowedIds.ToHashSet();
@@ -209,7 +213,7 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
         CancellationToken cancellationToken) =>
         await dbContext.Professionals
             .AsNoTracking()
-            .Where(professional => professional.IsActive)
+            .Where(professional => professional.IsActive && !professional.IsDeleted)
             .OrderBy(professional => professional.FullName)
             .Select(professional => new ProfessionalOption(
                 professional.Id,

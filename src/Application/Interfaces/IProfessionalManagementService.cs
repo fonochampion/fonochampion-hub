@@ -11,4 +11,8 @@ public interface IProfessionalManagementService
         int professionalId,
         bool isActive,
         CancellationToken cancellationToken = default);
+
+    Task<ProfessionalManagementResult> DeleteAsync(
+        int professionalId,
+        CancellationToken cancellationToken = default);
 }

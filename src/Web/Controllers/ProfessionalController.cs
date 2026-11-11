@@ -27,6 +27,7 @@ public sealed class ProfessionalController(
             FullName = professional.FullName,
             Cpf = professional.Cpf,
             IsActive = professional.IsActive,
+            IsDeleted = professional.IsDeleted,
             AssociatedPatientCount = professional.AssociatedPatientCount
         }).ToArray());
     }
@@ -43,6 +44,34 @@ public sealed class ProfessionalController(
     [ValidateAntiForgeryToken]
     public Task<IActionResult> Reactivate(int id, CancellationToken cancellationToken) =>
         SetActiveAsync(id, isActive: true, cancellationToken);
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        var result = await professionalManagementService.DeleteAsync(id, cancellationToken);
+        if (result.Failure is { } failure)
+        {
+            if (failure == ProfessionalManagementFailure.ProfessionalNotFound)
+            {
+                return NotFound();
+            }
+
+            TempData["ProfessionalError"] = failure switch
+            {
+                ProfessionalManagementFailure.ProfessionalAlreadyDeleted =>
+                    "O profissional já está excluído.",
+                ProfessionalManagementFailure.ProfessionalHasAssociatedPatients =>
+                    "O profissional possui pacientes associados e não pode ser excluído.",
+                _ => throw new InvalidOperationException(
+                    $"Unsupported professional management failure: {failure}.")
+            };
+            return RedirectToAction(nameof(Index));
+        }
+
+        TempData["ProfessionalNotice"] = "Profissional excluído.";
+        return RedirectToAction(nameof(Index));
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -235,6 +264,12 @@ public sealed class ProfessionalController(
             cancellationToken);
         if (result.Failure is { } failure)
         {
+            if (failure == ProfessionalManagementFailure.ProfessionalAlreadyDeleted)
+            {
+                TempData["ProfessionalError"] = "Um profissional excluído não pode ser reativado.";
+                return RedirectToAction(nameof(Index));
+            }
+
             return failure switch
             {
                 ProfessionalManagementFailure.ProfessionalNotFound => NotFound(),

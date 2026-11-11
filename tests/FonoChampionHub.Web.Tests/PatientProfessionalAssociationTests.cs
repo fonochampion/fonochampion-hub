@@ -42,6 +42,24 @@ public sealed class PatientProfessionalAssociationTests
     }
 
     [Fact]
+    public async Task Registration_and_scheduling_options_exclude_deleted_professionals()
+    {
+        await using var dbContext = CreateDbContext();
+        var patient = await AddPatientAsync(dbContext);
+        var active = await AddProfessionalAsync(dbContext, "Ana Terapeuta");
+        var deleted = await AddProfessionalAsync(dbContext, "Bruno Terapeuta");
+        deleted.IsDeleted = true;
+        await dbContext.SaveChangesAsync();
+        var service = new PatientProfessionalAssociationService(dbContext);
+
+        var registrationOptions = await service.GetRegistrationOptionsAsync();
+        var schedulingOptions = await service.GetSchedulingOptionsAsync(patient.Id);
+
+        Assert.Equal(active.Id, Assert.Single(registrationOptions).Id);
+        Assert.Equal(active.Id, Assert.Single(schedulingOptions!).Id);
+    }
+
+    [Fact]
     public async Task Scheduling_associates_selected_professionals_when_none_are_associated()
     {
         await using var dbContext = CreateDbContext();
@@ -147,6 +165,24 @@ public sealed class PatientProfessionalAssociationTests
 
         Assert.Equal(
             FonoChampionHub.Application.DTOs.PatientProfessionalAssociationFailure.InvalidProfessional,
+            result.Failure);
+        Assert.Empty(await dbContext.PatientProfessionals.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Patient_management_rejects_adding_a_deleted_professional()
+    {
+        await using var dbContext = CreateDbContext();
+        var patient = await AddPatientAsync(dbContext);
+        var professional = await AddProfessionalAsync(dbContext, "Ana Excluída");
+        professional.IsDeleted = true;
+        await dbContext.SaveChangesAsync();
+        var service = new PatientProfessionalAssociationService(dbContext);
+
+        var result = await service.AddToPatientAsync(patient.Id, [professional.Id]);
+
+        Assert.Equal(
+            Application.DTOs.PatientProfessionalAssociationFailure.InvalidProfessional,
             result.Failure);
         Assert.Empty(await dbContext.PatientProfessionals.ToListAsync());
     }

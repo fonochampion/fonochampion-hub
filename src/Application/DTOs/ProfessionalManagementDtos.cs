@@ -5,11 +5,14 @@ public sealed record ProfessionalListItem(
     string FullName,
     string Cpf,
     bool IsActive,
+    bool IsDeleted,
     int AssociatedPatientCount);
 
 public enum ProfessionalManagementFailure
 {
-    ProfessionalNotFound
+    ProfessionalNotFound,
+    ProfessionalAlreadyDeleted,
+    ProfessionalHasAssociatedPatients
 }
 
 public sealed record ProfessionalManagementResult(ProfessionalManagementFailure? Failure)

@@ -23,6 +23,10 @@ public sealed class ProfessionalConfiguration : IEntityTypeConfiguration<Profess
             .IsRequired()
             .HasDefaultValue(true);
 
+        builder.Property(professional => professional.IsDeleted)
+            .IsRequired()
+            .HasDefaultValue(false);
+
         builder.HasIndex(professional => professional.Cpf)
             .IsUnique()
             .HasDatabaseName(Professional.CpfUniqueIndexName);
