@@ -40,5 +40,5 @@ Detailed flows and remaining open questions are in [05 — Use Cases](../05-use-
 ## Consequences
 
 - **Benefits:** The initial product supports the full scheduled-to-realized attendance flow while retaining a distinct history for rescheduling.
-- **Costs or risks:** Authentication, remaining cancellation-reason values, and clinical-data privacy/handling requirements remain open.
+- **Costs or risks:** At the time of this decision, authentication, cancellation-reason values, and clinical-data privacy/handling requirements remained open. Authentication and cancellation-reason values have since been resolved; clinical-data privacy/handling requirements remain open.
 - **Follow-up actions:** Apply the role permissions in ADR-018 and resolve the remaining UC-008 questions before implementation.

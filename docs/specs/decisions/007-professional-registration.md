@@ -15,7 +15,7 @@ The requester defined professional registration as part of the initial system sc
 ## Decision
 
 - Initially register only fonoaudiólogos; support for other professions may be considered in the future but is not included now.
-- Professional records include basic data and CPF. CPF defines uniqueness among professionals; CPF requiredness and validation remain open.
+- Professional records include basic data and CPF. CPF defines uniqueness among professionals; its requiredness and validation, which were open at the time of this decision, are defined in [ADR-031](./031-professional-record-rules.md).
 - Certifications contain a description, an alphanumeric registration, and a completion date. Requiredness and multiplicity remain open.
 - Professional contacts include telephone and email. Requiredness, multiplicity, and validation remain open.
 - Support creating, modifying, inactivating, and deleting a professional.
