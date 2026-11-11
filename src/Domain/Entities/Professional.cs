@@ -12,6 +12,8 @@ public sealed class Professional
 
     public bool IsActive { get; set; } = true;
 
+    public bool IsDeleted { get; set; }
+
     public ICollection<ProfessionalCertification> Certifications { get; set; } =
         new List<ProfessionalCertification>();
 

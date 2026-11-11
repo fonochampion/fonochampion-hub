@@ -50,5 +50,7 @@ public sealed class ProfessionalListItemViewModel
 
     public required bool IsActive { get; init; }
 
+    public required bool IsDeleted { get; init; }
+
     public required int AssociatedPatientCount { get; init; }
 }

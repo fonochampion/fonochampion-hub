@@ -64,6 +64,103 @@ public sealed class ProfessionalManagementTests
         var item = Assert.Single(professionals);
         Assert.False(item.IsActive);
         Assert.Equal(1, item.AssociatedPatientCount);
+        Assert.False(item.IsDeleted);
+    }
+
+    [Fact]
+    public async Task Delete_marks_unassociated_professional_terminally_deleted_and_preserves_details()
+    {
+        await using var dbContext = CreateDbContext();
+        var professional = new Professional
+        {
+            FullName = "Ana Terapeuta",
+            Cpf = "12345678909",
+            Certifications =
+            [
+                new ProfessionalCertification
+                {
+                    Description = "Linguagem",
+                    Registration = "CRFA1234",
+                    CompletionDate = new DateOnly(2024, 3, 10)
+                }
+            ],
+            Contacts =
+            [
+                new ProfessionalContact
+                {
+                    Type = ContactMethodType.Email,
+                    Value = "ana@example.com"
+                }
+            ]
+        };
+        dbContext.Professionals.Add(professional);
+        await dbContext.SaveChangesAsync();
+        var service = new ProfessionalManagementService(dbContext);
+
+        var result = await service.DeleteAsync(professional.Id);
+        var persistedProfessional = await dbContext.Professionals
+            .Include(item => item.Certifications)
+            .Include(item => item.Contacts)
+            .SingleAsync();
+
+        Assert.True(result.Succeeded);
+        Assert.True(persistedProfessional.IsDeleted);
+        Assert.False(persistedProfessional.IsActive);
+        Assert.Single(persistedProfessional.Certifications);
+        Assert.Single(persistedProfessional.Contacts);
+        Assert.Empty(await dbContext.PatientProfessionals.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Delete_rejects_professional_with_associated_patient()
+    {
+        await using var dbContext = CreateDbContext();
+        var patient = await AddPatientAsync(dbContext);
+        var professional = new Professional
+        {
+            FullName = "Ana Terapeuta",
+            Cpf = "12345678909",
+            IsActive = false
+        };
+        dbContext.PatientProfessionals.Add(new PatientProfessional
+        {
+            Patient = patient,
+            Professional = professional
+        });
+        await dbContext.SaveChangesAsync();
+        var service = new ProfessionalManagementService(dbContext);
+
+        var result = await service.DeleteAsync(professional.Id);
+
+        Assert.Equal(
+            Application.DTOs.ProfessionalManagementFailure.ProfessionalHasAssociatedPatients,
+            result.Failure);
+        Assert.False(professional.IsDeleted);
+        Assert.Single(await dbContext.PatientProfessionals.ToListAsync());
+    }
+
+    [Fact]
+    public async Task SetActive_rejects_deleted_professional()
+    {
+        await using var dbContext = CreateDbContext();
+        var professional = new Professional
+        {
+            FullName = "Ana Terapeuta",
+            Cpf = "12345678909",
+            IsActive = false,
+            IsDeleted = true
+        };
+        dbContext.Professionals.Add(professional);
+        await dbContext.SaveChangesAsync();
+        var service = new ProfessionalManagementService(dbContext);
+
+        var result = await service.SetActiveAsync(professional.Id, true);
+
+        Assert.Equal(
+            Application.DTOs.ProfessionalManagementFailure.ProfessionalAlreadyDeleted,
+            result.Failure);
+        Assert.False(professional.IsActive);
+        Assert.True(Assert.Single(await service.GetProfessionalsAsync()).IsDeleted);
     }
 
     [Fact]

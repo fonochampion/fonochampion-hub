@@ -12,6 +12,10 @@
 {
     <div class="alert alert-success" role="status">@notice</div>
 }
+@if (TempData["ProfessionalError"] is string error)
+{
+    <div class="alert alert-danger" role="alert">@error</div>
+}
 
 <div class="table-responsive">
     <table class="table align-middle">
@@ -37,26 +41,46 @@
                 <tr>
                     <td>@professional.FullName</td>
                     <td>@professional.Cpf</td>
-                    <td>@(professional.IsActive ? "Ativo" : "Inativo")</td>
+                    <td>
+                        @(professional.IsDeleted
+                            ? "Excluído"
+                            : professional.IsActive ? "Ativo" : "Inativo")
+                    </td>
                     <td>@professional.AssociatedPatientCount</td>
                     <td>
-                        @if (professional.IsActive)
+                        @if (!professional.IsDeleted)
                         {
-                            <form asp-action="Inactivate" method="post">
-                                <input type="hidden" name="id" value="@professional.Id" />
-                                <button type="submit" class="btn btn-outline-secondary btn-sm">
-                                    Inativar
-                                </button>
-                            </form>
-                        }
-                        else
-                        {
-                            <form asp-action="Reactivate" method="post">
-                                <input type="hidden" name="id" value="@professional.Id" />
-                                <button type="submit" class="btn btn-outline-primary btn-sm">
-                                    Reativar
-                                </button>
-                            </form>
+                            <div class="d-flex flex-wrap gap-2">
+                                @if (professional.IsActive)
+                                {
+                                    <form asp-action="Inactivate" method="post">
+                                        <input type="hidden" name="id" value="@professional.Id" />
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                            Inativar
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Reactivate" method="post">
+                                        <input type="hidden" name="id" value="@professional.Id" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                                            Reativar
+                                        </button>
+                                    </form>
+                                }
+                                @if (professional.AssociatedPatientCount == 0)
+                                {
+                                    <form asp-action="Delete"
+                                          method="post"
+                                          onsubmit="return confirm('Marcar este profissional como excluído? Esta ação não pode ser desfeita.');">
+                                        <input type="hidden" name="id" value="@professional.Id" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            Excluir
+                                        </button>
+                                    </form>
+                                }
+                            </div>
                         }
                     </td>
                 </tr>
