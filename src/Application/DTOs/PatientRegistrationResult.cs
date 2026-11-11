@@ -7,6 +7,8 @@ public enum PatientRegistrationFailure
     InvalidFullName,
     FutureDateOfBirth,
     DuplicatePatient,
+    InvalidResponsiblePerson,
+    DuplicateResponsiblePerson,
     CatalogUnavailable,
     InvalidCid10Code
 }

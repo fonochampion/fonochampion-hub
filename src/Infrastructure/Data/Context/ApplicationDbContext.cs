@@ -14,6 +14,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<Patient> Patients => Set<Patient>();
 
+    public DbSet<ResponsiblePerson> ResponsiblePersons => Set<ResponsiblePerson>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

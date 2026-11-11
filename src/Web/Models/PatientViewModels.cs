@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FonoChampionHub.Domain.Enums;
 
 namespace FonoChampionHub.Web.Models;
 
@@ -15,6 +16,16 @@ public sealed class CreatePatientViewModel
     public string Cid10Code { get; set; } = string.Empty;
 
     public string Cid10Description { get; set; } = string.Empty;
+
+    public List<ResponsiblePersonInputViewModel> ResponsiblePersons { get; set; } =
+        [new ResponsiblePersonInputViewModel()];
+}
+
+public sealed class ResponsiblePersonInputViewModel
+{
+    public string? FullName { get; set; }
+
+    public ResponsiblePersonKinship? Kinship { get; set; }
 }
 
 public sealed class CreatedPatientViewModel

@@ -28,6 +28,39 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
             return PatientRegistrationResult.Failed(PatientRegistrationFailure.InvalidFullName);
         }
 
+        var responsiblePersons = new List<ResponsiblePerson>();
+        var responsiblePersonNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var responsiblePersonRequest in request.ResponsiblePersons ?? [])
+        {
+            if (string.IsNullOrWhiteSpace(responsiblePersonRequest.FullName) ||
+                !Enum.IsDefined(responsiblePersonRequest.Kinship))
+            {
+                return PatientRegistrationResult.Failed(
+                    PatientRegistrationFailure.InvalidResponsiblePerson);
+            }
+
+            var normalizedResponsiblePersonName =
+                ResponsiblePerson.NormalizeFullNameForComparison(responsiblePersonRequest.FullName);
+            if (normalizedResponsiblePersonName.Length == 0)
+            {
+                return PatientRegistrationResult.Failed(
+                    PatientRegistrationFailure.InvalidResponsiblePerson);
+            }
+
+            if (!responsiblePersonNames.Add(normalizedResponsiblePersonName))
+            {
+                return PatientRegistrationResult.Failed(
+                    PatientRegistrationFailure.DuplicateResponsiblePerson);
+            }
+
+            responsiblePersons.Add(new ResponsiblePerson
+            {
+                FullName = responsiblePersonRequest.FullName.Trim(),
+                NormalizedFullName = normalizedResponsiblePersonName,
+                Kinship = responsiblePersonRequest.Kinship
+            });
+        }
+
         if (request.DateOfBirth > DateOnly.FromDateTime(DateTime.Today))
         {
             return PatientRegistrationResult.Failed(PatientRegistrationFailure.FutureDateOfBirth);
@@ -71,7 +104,8 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
             NormalizedFullName = normalizedFullName,
             DateOfBirth = request.DateOfBirth,
             Cid10CatalogEntryId = cidEntry.Id,
-            Cid10CatalogEntry = cidEntry
+            Cid10CatalogEntry = cidEntry,
+            ResponsiblePersons = responsiblePersons
         };
 
         dbContext.Patients.Add(patient);
@@ -83,6 +117,11 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
         {
             return PatientRegistrationResult.Failed(PatientRegistrationFailure.DuplicatePatient);
         }
+        catch (DbUpdateException exception) when (IsDuplicateResponsiblePersonConstraintViolation(exception))
+        {
+            return PatientRegistrationResult.Failed(
+                PatientRegistrationFailure.DuplicateResponsiblePerson);
+        }
 
         return PatientRegistrationResult.Success(patient);
     }
@@ -92,5 +131,12 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
         {
             SqlState: PostgresErrorCodes.UniqueViolation,
             ConstraintName: Patient.FullNameDateOfBirthIndexName
+        };
+
+    private static bool IsDuplicateResponsiblePersonConstraintViolation(DbUpdateException exception) =>
+        exception.InnerException is PostgresException
+        {
+            SqlState: PostgresErrorCodes.UniqueViolation,
+            ConstraintName: ResponsiblePerson.PatientNormalizedFullNameIndexName
         };
 }
