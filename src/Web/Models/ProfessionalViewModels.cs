@@ -3,7 +3,7 @@ using FonoChampionHub.Domain.Enums;
 
 namespace FonoChampionHub.Web.Models;
 
-public sealed class CreateProfessionalViewModel
+public abstract class ProfessionalFormViewModel
 {
     [Required(ErrorMessage = "Informe o nome completo.")]
     public string? FullName { get; set; }
@@ -18,8 +18,19 @@ public sealed class CreateProfessionalViewModel
         [new ProfessionalContactInputViewModel()];
 }
 
+public sealed class CreateProfessionalViewModel : ProfessionalFormViewModel
+{
+}
+
+public sealed class EditProfessionalViewModel : ProfessionalFormViewModel
+{
+    public int Id { get; set; }
+}
+
 public sealed class ProfessionalCertificationInputViewModel
 {
+    public int? Id { get; set; }
+
     public string? Description { get; set; }
 
     public string? Registration { get; set; }
@@ -30,6 +41,8 @@ public sealed class ProfessionalCertificationInputViewModel
 
 public sealed class ProfessionalContactInputViewModel
 {
+    public int? Id { get; set; }
+
     public ContactMethodType? Type { get; set; }
 
     public string? Value { get; set; }
