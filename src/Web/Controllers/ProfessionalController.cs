@@ -12,11 +12,37 @@ namespace FonoChampionHub.Web.Controllers;
 
 [Authorize(Roles = SystemRoles.Administrator)]
 public sealed class ProfessionalController(
-    IProfessionalRegistrationService professionalRegistrationService)
+    IProfessionalRegistrationService professionalRegistrationService,
+    IProfessionalManagementService professionalManagementService)
     : Controller
 {
     [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        var professionals = await professionalManagementService.GetProfessionalsAsync(
+            cancellationToken);
+        return View(professionals.Select(professional => new ProfessionalListItemViewModel
+        {
+            Id = professional.Id,
+            FullName = professional.FullName,
+            Cpf = professional.Cpf,
+            IsActive = professional.IsActive,
+            AssociatedPatientCount = professional.AssociatedPatientCount
+        }).ToArray());
+    }
+
+    [HttpGet]
     public IActionResult Create() => View(new CreateProfessionalViewModel());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public Task<IActionResult> Inactivate(int id, CancellationToken cancellationToken) =>
+        SetActiveAsync(id, isActive: false, cancellationToken);
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public Task<IActionResult> Reactivate(int id, CancellationToken cancellationToken) =>
+        SetActiveAsync(id, isActive: true, cancellationToken);
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -196,5 +222,30 @@ public sealed class ProfessionalController(
         };
 
         ModelState.AddModelError(key, message);
+    }
+
+    private async Task<IActionResult> SetActiveAsync(
+        int id,
+        bool isActive,
+        CancellationToken cancellationToken)
+    {
+        var result = await professionalManagementService.SetActiveAsync(
+            id,
+            isActive,
+            cancellationToken);
+        if (result.Failure is { } failure)
+        {
+            return failure switch
+            {
+                ProfessionalManagementFailure.ProfessionalNotFound => NotFound(),
+                _ => throw new InvalidOperationException(
+                    $"Unsupported professional management failure: {failure}.")
+            };
+        }
+
+        TempData["ProfessionalNotice"] = isActive
+            ? "Profissional reativado."
+            : "Profissional inativado.";
+        return RedirectToAction(nameof(Index));
     }
 }

@@ -90,6 +90,31 @@ public sealed class PatientRegistrationTests
     }
 
     [Fact]
+    public async Task RegisterAsync_rejects_inactive_professional_ids()
+    {
+        await using var dbContext = CreateDbContext();
+        await AddCurrentCatalogEntryAsync(dbContext);
+        var professional = new Professional
+        {
+            FullName = "Ana Terapeuta",
+            Cpf = "12345678909",
+            IsActive = false
+        };
+        dbContext.Professionals.Add(professional);
+        await dbContext.SaveChangesAsync();
+        var service = new PatientRegistrationService(dbContext);
+
+        var result = await service.RegisterAsync(new RegisterPatientRequest(
+            "Maria Silva",
+            new DateOnly(1990, 5, 12),
+            "A00",
+            ProfessionalIds: [professional.Id]));
+
+        Assert.Equal(PatientRegistrationFailure.InvalidProfessional, result.Failure);
+        Assert.Empty(await dbContext.Patients.ToListAsync());
+    }
+
+    [Fact]
     public async Task RegisterAsync_persists_multiple_responsible_persons_with_the_patient()
     {
         await using var dbContext = CreateDbContext();

@@ -110,7 +110,9 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
 
         var professionalIds = request.ProfessionalIds?.Distinct().ToArray() ?? [];
         var professionals = await dbContext.Professionals
-            .Where(professional => professionalIds.Contains(professional.Id))
+            .Where(professional =>
+                professional.IsActive &&
+                professionalIds.Contains(professional.Id))
             .ToListAsync(cancellationToken);
         if (professionals.Count != professionalIds.Length)
         {

@@ -1,0 +1,14 @@
+using FonoChampionHub.Application.DTOs;
+
+namespace FonoChampionHub.Application.Interfaces;
+
+public interface IProfessionalManagementService
+{
+    Task<IReadOnlyList<ProfessionalListItem>> GetProfessionalsAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<ProfessionalManagementResult> SetActiveAsync(
+        int professionalId,
+        bool isActive,
+        CancellationToken cancellationToken = default);
+}

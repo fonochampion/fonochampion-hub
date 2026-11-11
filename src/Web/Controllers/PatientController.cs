@@ -336,7 +336,8 @@ public sealed class PatientController(
             .Select(professional => new ProfessionalOptionViewModel
             {
                 Id = professional.Id,
-                FullName = professional.FullName
+                FullName = professional.FullName,
+                IsActive = professional.IsActive
             })
             .ToList();
     }
@@ -354,14 +355,16 @@ public sealed class PatientController(
                 .Select(professional => new ProfessionalOptionViewModel
                 {
                     Id = professional.Id,
-                    FullName = professional.FullName
+                    FullName = professional.FullName,
+                    IsActive = professional.IsActive
                 })
                 .ToArray(),
             AvailableProfessionals = management.AvailableProfessionals
                 .Select(professional => new ProfessionalOptionViewModel
                 {
                     Id = professional.Id,
-                    FullName = professional.FullName
+                    FullName = professional.FullName,
+                    IsActive = professional.IsActive
                 })
                 .ToArray()
         };

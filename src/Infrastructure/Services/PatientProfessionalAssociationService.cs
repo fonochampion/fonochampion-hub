@@ -41,7 +41,8 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
                     .OrderBy(association => association.Professional.FullName)
                     .Select(association => new ProfessionalOption(
                         association.ProfessionalId,
-                        association.Professional.FullName))
+                        association.Professional.FullName,
+                        association.Professional.IsActive))
                     .ToList()
             })
             .SingleOrDefaultAsync(cancellationToken);
@@ -56,11 +57,14 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
             .ToArray();
         var available = await dbContext.Professionals
             .AsNoTracking()
-            .Where(professional => !associatedIds.Contains(professional.Id))
+            .Where(professional =>
+                professional.IsActive &&
+                !associatedIds.Contains(professional.Id))
             .OrderBy(professional => professional.FullName)
             .Select(professional => new ProfessionalOption(
                 professional.Id,
-                professional.FullName))
+                professional.FullName,
+                professional.IsActive))
             .ToListAsync(cancellationToken);
 
         return new PatientProfessionalManagement(
@@ -75,11 +79,14 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
     {
         var associated = await dbContext.PatientProfessionals
             .AsNoTracking()
-            .Where(association => association.PatientId == patientId)
+            .Where(association =>
+                association.PatientId == patientId &&
+                association.Professional.IsActive)
             .OrderBy(association => association.Professional.FullName)
             .Select(association => new ProfessionalOption(
                 association.ProfessionalId,
-                association.Professional.FullName))
+                association.Professional.FullName,
+                association.Professional.IsActive))
             .ToListAsync(cancellationToken);
 
         if (associated.Count > 0)
@@ -114,7 +121,9 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
         }
 
         var professionals = await dbContext.Professionals
-            .Where(professional => ids.Contains(professional.Id))
+            .Where(professional =>
+                professional.IsActive &&
+                ids.Contains(professional.Id))
             .ToListAsync(cancellationToken);
         if (professionals.Count != ids.Length)
         {
@@ -165,12 +174,15 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
         }
 
         var associatedIds = await dbContext.PatientProfessionals
-            .Where(association => association.PatientId == patientId)
+            .Where(association =>
+                association.PatientId == patientId &&
+                association.Professional.IsActive)
             .Select(association => association.ProfessionalId)
             .ToListAsync(cancellationToken);
         var allowedIds = associatedIds.Count > 0
             ? associatedIds
             : await dbContext.Professionals
+                .Where(professional => professional.IsActive)
                 .Select(professional => professional.Id)
                 .ToListAsync(cancellationToken);
         var allowedIdSet = allowedIds.ToHashSet();
@@ -197,9 +209,11 @@ public sealed class PatientProfessionalAssociationService(ApplicationDbContext d
         CancellationToken cancellationToken) =>
         await dbContext.Professionals
             .AsNoTracking()
+            .Where(professional => professional.IsActive)
             .OrderBy(professional => professional.FullName)
             .Select(professional => new ProfessionalOption(
                 professional.Id,
-                professional.FullName))
+                professional.FullName,
+                professional.IsActive))
             .ToListAsync(cancellationToken);
 }

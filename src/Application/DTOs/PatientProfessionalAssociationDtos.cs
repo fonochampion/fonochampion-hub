@@ -1,6 +1,6 @@
 namespace FonoChampionHub.Application.DTOs;
 
-public sealed record ProfessionalOption(int Id, string FullName);
+public sealed record ProfessionalOption(int Id, string FullName, bool IsActive);
 
 public sealed record PatientListItem(
     int Id,

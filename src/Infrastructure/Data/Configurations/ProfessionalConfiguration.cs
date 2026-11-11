@@ -19,6 +19,10 @@ public sealed class ProfessionalConfiguration : IEntityTypeConfiguration<Profess
             .HasMaxLength(11)
             .IsRequired();
 
+        builder.Property(professional => professional.IsActive)
+            .IsRequired()
+            .HasDefaultValue(true);
+
         builder.HasIndex(professional => professional.Cpf)
             .IsUnique()
             .HasDatabaseName(Professional.CpfUniqueIndexName);

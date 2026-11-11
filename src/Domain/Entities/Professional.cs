@@ -10,6 +10,8 @@ public sealed class Professional
 
     public string Cpf { get; set; } = string.Empty;
 
+    public bool IsActive { get; set; } = true;
+
     public ICollection<ProfessionalCertification> Certifications { get; set; } =
         new List<ProfessionalCertification>();
 

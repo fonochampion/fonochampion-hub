@@ -1,0 +1,66 @@
+@model IReadOnlyList<ProfessionalListItemViewModel>
+@{
+    ViewData["Title"] = "Profissionais";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h1 class="h2 mb-0">Profissionais</h1>
+    <a class="btn btn-primary" asp-action="Create">Cadastrar profissional</a>
+</div>
+
+@if (TempData["ProfessionalNotice"] is string notice)
+{
+    <div class="alert alert-success" role="status">@notice</div>
+}
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <caption class="visually-hidden">Profissionais cadastrados</caption>
+        <thead>
+            <tr>
+                <th scope="col">Nome completo</th>
+                <th scope="col">CPF</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Pacientes associados</th>
+                <th scope="col"><span class="visually-hidden">Ações</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr>
+                    <td colspan="5">Nenhum profissional cadastrado.</td>
+                </tr>
+            }
+            @foreach (var professional in Model)
+            {
+                <tr>
+                    <td>@professional.FullName</td>
+                    <td>@professional.Cpf</td>
+                    <td>@(professional.IsActive ? "Ativo" : "Inativo")</td>
+                    <td>@professional.AssociatedPatientCount</td>
+                    <td>
+                        @if (professional.IsActive)
+                        {
+                            <form asp-action="Inactivate" method="post">
+                                <input type="hidden" name="id" value="@professional.Id" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                    Inativar
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="Reactivate" method="post">
+                                <input type="hidden" name="id" value="@professional.Id" />
+                                <button type="submit" class="btn btn-outline-primary btn-sm">
+                                    Reativar
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
