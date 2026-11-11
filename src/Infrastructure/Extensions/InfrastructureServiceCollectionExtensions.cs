@@ -44,6 +44,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<InitialAdministratorBootstrapper>();
         services.AddScoped<ICid10CatalogImporter, Cid10CatalogImporter>();
         services.AddScoped<ICid10CatalogQueryService, Cid10CatalogQueryService>();
+        services.AddScoped<IPatientRegistrationService, PatientRegistrationService>();
 
         return services;
     }

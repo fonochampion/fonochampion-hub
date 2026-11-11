@@ -24,7 +24,7 @@ When a new feature or approved scope change is specified, add its implementation
 
 Readiness is separate from status: keep the existing status values and mark an item ready only when its scope is sufficiently specified, all listed dependencies are `DONE`, and all relevant decision gates are resolved. Prioritize ready items with no dependencies before ready items whose dependencies are complete. Keep blocked items visible with the exact dependency or open decision that prevents implementation.
 
-IMP-001, IMP-002, IMP-003, IMP-004, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. In roadmap order, IMP-005 and IMP-018 are ready because their dependencies are complete and their decision gates are resolved. IMP-006 remains blocked until IMP-005 is complete. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
+IMP-001, IMP-002, IMP-003, IMP-004, IMP-005, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. In roadmap order, IMP-006 and IMP-018 are ready because their dependencies are complete and their decision gates are resolved. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
 
 ## Phase 0 — Resolve specification gates
 
@@ -68,7 +68,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | ID | Feature | Depends on | Status |
 |---|---|---|---|
 | IMP-026 | Import the reusable, read-only Brazilian Portuguese CID-10 catalog from a local directory supplied in each environment through an explicit command; preserve its chapter/group/category/subcategory hierarchy and lookup by code or description; identify each file set by content fingerprint when no upstream version is available; exclude CID-O and do not commit, package, or redistribute the files or catalog data. | IMP-002 | DONE |
-| IMP-005 | Implement patient record creation with full name, required date of birth, and CID selected from the local catalog. | IMP-002, IMP-026 | PENDING |
+| IMP-005 | Implement patient record creation with full name, required date of birth, and CID selected from the local catalog. | IMP-002, IMP-026 | DONE |
 | IMP-016 | Record optional dated anamneses for patients, including the confirmed sections, separate entries, and preserved revision history. | IMP-005; DG-008 | BLOCKED |
 | IMP-006 | Register a responsible person with full name and degree of kinship and associate them with a patient. | IMP-005; DG-003 | BLOCKED |
 | IMP-007 | Register telephone and email contact details for a responsible person. | IMP-006; DG-004 | BLOCKED |

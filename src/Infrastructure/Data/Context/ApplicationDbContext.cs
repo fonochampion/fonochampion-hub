@@ -12,6 +12,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<Cid10CatalogEntry> Cid10CatalogEntries => Set<Cid10CatalogEntry>();
 
+    public DbSet<Patient> Patients => Set<Patient>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
