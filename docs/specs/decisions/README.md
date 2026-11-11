@@ -32,6 +32,13 @@ Start with [000-template.md](./000-template.md). When recording a decision, incl
 - [025 — Agent guidance and skill boundaries](./025-agent-guidance-and-skill-boundaries.md)
 - [026 — Local CID-10 reference catalog](./026-local-cid10-reference-catalog.md)
 - [027 — Patient date of birth and age display](./027-patient-date-of-birth-and-age-display.md)
+- [028 — Patient duplicate detection](./028-patient-duplicate-detection.md)
+- [029 — Responsible-person rules](./029-responsible-person-rules.md)
+- [030 — Responsible-person contact rules](./030-responsible-person-contact-rules.md)
+- [031 — Professional record rules](./031-professional-record-rules.md)
+- [032 — Professional deletion lifecycle](./032-professional-deletion-lifecycle.md)
+- [033 — Anamnesis revision and clinical-data gate](./033-anamnesis-revision-and-clinical-data-gate.md)
+- [034 — Attendance cancellation reasons](./034-attendance-cancellation-reasons.md)
 
 ## Superseded decisions
 
