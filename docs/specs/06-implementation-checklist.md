@@ -1,7 +1,7 @@
 # Implementation Roadmap
 
 **Status:** Working roadmap
-**Last reviewed:** 2026-10-31
+**Last reviewed:** 2026-11-11
 
 This is the master, hierarchical list of approved implementation work. The specifications in this directory remain the source of truth for scope and behavior; this roadmap tracks implementation status and sequence. Its order reflects dependencies, not priority or a commitment to implement every item in one delivery.
 
@@ -24,7 +24,7 @@ When a new feature or approved scope change is specified, add its implementation
 
 Readiness is separate from status: keep the existing status values and mark an item ready only when its scope is sufficiently specified, all listed dependencies are `DONE`, and all relevant decision gates are resolved. Prioritize ready items with no dependencies before ready items whose dependencies are complete. Keep blocked items visible with the exact dependency or open decision that prevents implementation.
 
-IMP-001, IMP-002, IMP-003, IMP-004, IMP-005, IMP-006, IMP-018, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. Reassess other pending work against its listed dependencies and decision gates. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
+IMP-001, IMP-002, IMP-003, IMP-004, IMP-005, IMP-006, IMP-007, IMP-018, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. Reassess other pending work against its listed dependencies and decision gates. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
 
 ## Phase 0 — Resolve specification gates
 
@@ -71,7 +71,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | IMP-005 | Implement patient record creation with full name, required date of birth, and CID selected from the local catalog. | IMP-002, IMP-026 | DONE |
 | IMP-016 | Record optional dated anamneses for patients, including the confirmed sections, separate entries, and preserved revision history. | IMP-005; DG-008 | BLOCKED |
 | IMP-006 | Register a responsible person with full name and degree of kinship and associate them with a patient. | IMP-005; DG-003 | DONE |
-| IMP-007 | Register telephone and email contact details for a responsible person. | IMP-006; DG-004 | BLOCKED |
+| IMP-007 | Register telephone and email contact details for a responsible person. | IMP-006; DG-004 | DONE |
 
 ## Phase 3 — Business backlog: professional, scheduling, and attendance features
 

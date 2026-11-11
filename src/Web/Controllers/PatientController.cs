@@ -1,5 +1,6 @@
 using FonoChampionHub.Application.DTOs;
 using FonoChampionHub.Application.Interfaces;
+using FonoChampionHub.Domain.Entities;
 using FonoChampionHub.Domain.Enums;
 using FonoChampionHub.Infrastructure.Identity;
 using FonoChampionHub.Web.Models;
@@ -70,7 +71,63 @@ public sealed class PatientController(
         {
             var input = responsiblePersonInputs[index];
             var fullName = input.FullName?.Trim() ?? string.Empty;
-            if (fullName.Length == 0 && input.Kinship is null)
+            var contactRequests = new List<RegisterResponsiblePersonContactRequest>();
+            var contactInputs = input.Contacts ?? [];
+            var hasContactInput = false;
+            for (var contactIndex = 0; contactIndex < contactInputs.Count; contactIndex++)
+            {
+                var contact = contactInputs[contactIndex];
+                var value = contact.Value?.Trim() ?? string.Empty;
+                if (contact.Type is null && value.Length == 0)
+                {
+                    continue;
+                }
+
+                hasContactInput = true;
+                ResponsiblePersonContactType? validType = null;
+                if (contact.Type is { } type && Enum.IsDefined(type))
+                {
+                    validType = type;
+                }
+                else
+                {
+                    ModelState.AddModelError(
+                        $"ResponsiblePersons[{index}].Contacts[{contactIndex}].Type",
+                        "Selecione o tipo de contato.");
+                }
+
+                if (value.Length == 0)
+                {
+                    ModelState.AddModelError(
+                        $"ResponsiblePersons[{index}].Contacts[{contactIndex}].Value",
+                        "Informe o telefone ou e-mail.");
+                }
+                else if (validType is { } contactType)
+                {
+                    var isValid = contactType switch
+                    {
+                        ResponsiblePersonContactType.Telephone =>
+                            ResponsiblePersonContact.IsValidBrazilianTelephone(value),
+                        ResponsiblePersonContactType.Email =>
+                            ResponsiblePersonContact.IsValidEmailAddress(value),
+                        _ => false
+                    };
+                    if (!isValid)
+                    {
+                        ModelState.AddModelError(
+                            $"ResponsiblePersons[{index}].Contacts[{contactIndex}].Value",
+                            "Informe um telefone brasileiro ou e-mail válido.");
+                    }
+                    else
+                    {
+                        contactRequests.Add(new RegisterResponsiblePersonContactRequest(
+                            contactType,
+                            value));
+                    }
+                }
+            }
+
+            if (fullName.Length == 0 && input.Kinship is null && !hasContactInput)
             {
                 continue;
             }
@@ -89,13 +146,22 @@ public sealed class PatientController(
                     "Selecione o parentesco do responsável.");
             }
 
+            if (contactRequests.Count == 0)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Cada responsável precisa de ao menos um telefone ou e-mail válido.");
+            }
+
             if (fullName.Length > 0 &&
                 input.Kinship is { } kinship &&
-                Enum.IsDefined(kinship))
+                Enum.IsDefined(kinship) &&
+                contactRequests.Count > 0)
             {
                 responsiblePersonRequests.Add(new RegisterResponsiblePersonRequest(
                     fullName,
-                    kinship));
+                    kinship,
+                    contactRequests));
             }
         }
 
@@ -149,6 +215,10 @@ public sealed class PatientController(
                 (string.Empty, "Informe nome completo e parentesco para cada responsável adicionado."),
             PatientRegistrationFailure.DuplicateResponsiblePerson =>
                 (string.Empty, "Não é possível cadastrar nomes duplicados de responsáveis para o mesmo paciente."),
+            PatientRegistrationFailure.MissingResponsiblePersonContact =>
+                (string.Empty, "Cada responsável precisa de ao menos um telefone ou e-mail."),
+            PatientRegistrationFailure.InvalidResponsiblePersonContact =>
+                (string.Empty, "Informe um telefone brasileiro ou e-mail válido para cada responsável."),
             PatientRegistrationFailure.CatalogUnavailable =>
                 (string.Empty, "O catálogo CID-10 ainda não foi carregado neste ambiente."),
             PatientRegistrationFailure.InvalidCid10Code =>

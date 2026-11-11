@@ -10,4 +10,9 @@ public sealed record RegisterPatientRequest(
 
 public sealed record RegisterResponsiblePersonRequest(
     string FullName,
-    ResponsiblePersonKinship Kinship);
+    ResponsiblePersonKinship Kinship,
+    IReadOnlyList<RegisterResponsiblePersonContactRequest>? Contacts = null);
+
+public sealed record RegisterResponsiblePersonContactRequest(
+    ResponsiblePersonContactType Type,
+    string? Value);

@@ -53,11 +53,52 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
                     PatientRegistrationFailure.DuplicateResponsiblePerson);
             }
 
+            var contacts = new List<ResponsiblePersonContact>();
+            var contactRequests = responsiblePersonRequest.Contacts ?? [];
+            if (contactRequests.Count == 0)
+            {
+                return PatientRegistrationResult.Failed(
+                    PatientRegistrationFailure.MissingResponsiblePersonContact);
+            }
+
+            foreach (var contactRequest in contactRequests)
+            {
+                if (contactRequest is null ||
+                    !Enum.IsDefined(contactRequest.Type) ||
+                    string.IsNullOrWhiteSpace(contactRequest.Value))
+                {
+                    return PatientRegistrationResult.Failed(
+                        PatientRegistrationFailure.InvalidResponsiblePersonContact);
+                }
+
+                var contactValue = contactRequest.Value.Trim();
+                var isValid = contactRequest.Type switch
+                {
+                    ResponsiblePersonContactType.Telephone =>
+                        ResponsiblePersonContact.IsValidBrazilianTelephone(contactValue),
+                    ResponsiblePersonContactType.Email =>
+                        ResponsiblePersonContact.IsValidEmailAddress(contactValue),
+                    _ => false
+                };
+                if (!isValid)
+                {
+                    return PatientRegistrationResult.Failed(
+                        PatientRegistrationFailure.InvalidResponsiblePersonContact);
+                }
+
+                contacts.Add(new ResponsiblePersonContact
+                {
+                    Type = contactRequest.Type,
+                    Value = contactValue
+                });
+            }
+
             responsiblePersons.Add(new ResponsiblePerson
             {
                 FullName = responsiblePersonRequest.FullName.Trim(),
                 NormalizedFullName = normalizedResponsiblePersonName,
-                Kinship = responsiblePersonRequest.Kinship
+                Kinship = responsiblePersonRequest.Kinship,
+                Contacts = contacts
             });
         }
 

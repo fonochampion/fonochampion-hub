@@ -39,12 +39,33 @@ public sealed class PatientRegistrationTests
             new DateOnly(1990, 5, 12),
             "A00",
             [
-                new RegisterResponsiblePersonRequest("Ana Silva", ResponsiblePersonKinship.Mother),
-                new RegisterResponsiblePersonRequest("João Silva", ResponsiblePersonKinship.Grandparent)
+                new RegisterResponsiblePersonRequest(
+                    "Ana Silva",
+                    ResponsiblePersonKinship.Mother,
+                    [
+                        new RegisterResponsiblePersonContactRequest(
+                            ResponsiblePersonContactType.Telephone,
+                            " (11) 91234-5678 "),
+                        new RegisterResponsiblePersonContactRequest(
+                            ResponsiblePersonContactType.Telephone,
+                            "+55 11 3333-4444"),
+                        new RegisterResponsiblePersonContactRequest(
+                            ResponsiblePersonContactType.Email,
+                            " ana@example.com ")
+                    ]),
+                new RegisterResponsiblePersonRequest(
+                    "João Silva",
+                    ResponsiblePersonKinship.Grandparent,
+                    [
+                        new RegisterResponsiblePersonContactRequest(
+                            ResponsiblePersonContactType.Email,
+                            "joao@example.com")
+                    ])
             ]));
 
         Assert.True(result.Succeeded);
         var responsiblePersons = await dbContext.ResponsiblePersons
+            .Include(person => person.Contacts)
             .OrderBy(person => person.Id)
             .ToListAsync();
         Assert.Collection(
@@ -55,12 +76,39 @@ public sealed class PatientRegistrationTests
                 Assert.Equal("ANA SILVA", person.NormalizedFullName);
                 Assert.Equal(ResponsiblePersonKinship.Mother, person.Kinship);
                 Assert.Equal(result.Patient!.Id, person.PatientId);
+                Assert.Equal(3, person.Contacts.Count);
             },
             person =>
             {
                 Assert.Equal("João Silva", person.FullName);
                 Assert.Equal(ResponsiblePersonKinship.Grandparent, person.Kinship);
                 Assert.Equal(result.Patient!.Id, person.PatientId);
+                Assert.Single(person.Contacts);
+            });
+        var contacts = await dbContext.ResponsiblePersonContacts
+            .OrderBy(contact => contact.Id)
+            .ToListAsync();
+        Assert.Collection(
+            contacts,
+            contact =>
+            {
+                Assert.Equal(ResponsiblePersonContactType.Telephone, contact.Type);
+                Assert.Equal("(11) 91234-5678", contact.Value);
+            },
+            contact =>
+            {
+                Assert.Equal(ResponsiblePersonContactType.Telephone, contact.Type);
+                Assert.Equal("+55 11 3333-4444", contact.Value);
+            },
+            contact =>
+            {
+                Assert.Equal(ResponsiblePersonContactType.Email, contact.Type);
+                Assert.Equal("ana@example.com", contact.Value);
+            },
+            contact =>
+            {
+                Assert.Equal(ResponsiblePersonContactType.Email, contact.Type);
+                Assert.Equal("joao@example.com", contact.Value);
             });
     }
 
@@ -76,13 +124,89 @@ public sealed class PatientRegistrationTests
             new DateOnly(1990, 5, 12),
             "A00",
             [
-                new RegisterResponsiblePersonRequest("Ána Silva", ResponsiblePersonKinship.Mother),
-                new RegisterResponsiblePersonRequest("  ána   silva ", ResponsiblePersonKinship.LegalGuardian)
+                new RegisterResponsiblePersonRequest(
+                    "Ána Silva",
+                    ResponsiblePersonKinship.Mother,
+                    [
+                        new RegisterResponsiblePersonContactRequest(
+                            ResponsiblePersonContactType.Telephone,
+                            "11912345678")
+                    ]),
+                new RegisterResponsiblePersonRequest(
+                    "  ána   silva ",
+                    ResponsiblePersonKinship.LegalGuardian,
+                    [
+                        new RegisterResponsiblePersonContactRequest(
+                            ResponsiblePersonContactType.Email,
+                            "ana@example.com")
+                    ])
             ]));
 
         Assert.Equal(PatientRegistrationFailure.DuplicateResponsiblePerson, result.Failure);
         Assert.Empty(await dbContext.Patients.ToListAsync());
         Assert.Empty(await dbContext.ResponsiblePersons.ToListAsync());
+    }
+
+    [Fact]
+    public async Task RegisterAsync_requires_at_least_one_contact_for_each_responsible_person()
+    {
+        await using var dbContext = CreateDbContext();
+        await AddCurrentCatalogEntryAsync(dbContext);
+        var service = new PatientRegistrationService(dbContext);
+
+        var result = await service.RegisterAsync(new RegisterPatientRequest(
+            "Maria Silva",
+            new DateOnly(1990, 5, 12),
+            "A00",
+            [
+                new RegisterResponsiblePersonRequest(
+                    "Ana Silva",
+                    ResponsiblePersonKinship.Mother)
+            ]));
+
+        Assert.Equal(PatientRegistrationFailure.MissingResponsiblePersonContact, result.Failure);
+        Assert.Empty(await dbContext.Patients.ToListAsync());
+    }
+
+    [Theory]
+    [InlineData(ResponsiblePersonContactType.Telephone, "123")]
+    [InlineData(ResponsiblePersonContactType.Telephone, "+1 11 91234-5678")]
+    [InlineData(ResponsiblePersonContactType.Email, "not-an-email")]
+    public async Task RegisterAsync_rejects_invalid_contact_formats(
+        ResponsiblePersonContactType type,
+        string value)
+    {
+        await using var dbContext = CreateDbContext();
+        await AddCurrentCatalogEntryAsync(dbContext);
+        var service = new PatientRegistrationService(dbContext);
+
+        var result = await service.RegisterAsync(new RegisterPatientRequest(
+            "Maria Silva",
+            new DateOnly(1990, 5, 12),
+            "A00",
+            [
+                new RegisterResponsiblePersonRequest(
+                    "Ana Silva",
+                    ResponsiblePersonKinship.Mother,
+                    [new RegisterResponsiblePersonContactRequest(type, value)])
+            ]));
+
+        Assert.Equal(PatientRegistrationFailure.InvalidResponsiblePersonContact, result.Failure);
+        Assert.Empty(await dbContext.Patients.ToListAsync());
+    }
+
+    [Theory]
+    [InlineData("11 1234-5678", true)]
+    [InlineData("(11) 91234-5678", true)]
+    [InlineData("+55 (11) 91234-5678", true)]
+    [InlineData("+1 (11) 91234-5678", false)]
+    [InlineData("(11) 123-4567", false)]
+    [InlineData("11 ABCD-5678", false)]
+    public void IsValidBrazilianTelephone_checks_digit_count_and_allowed_separators(
+        string value,
+        bool expected)
+    {
+        Assert.Equal(expected, ResponsiblePersonContact.IsValidBrazilianTelephone(value));
     }
 
     [Fact]

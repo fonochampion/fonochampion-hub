@@ -42,7 +42,7 @@
     </div>
     <fieldset class="mb-4">
         <legend class="h5">Responsáveis (opcional)</legend>
-        <div id="responsible-person-list" data-next-index="@Model.ResponsiblePersons.Count">
+        <div id="responsible-person-list">
             @for (var index = 0; index < Model.ResponsiblePersons.Count; index++)
             {
                 <div class="row g-3 align-items-end mb-3" data-responsible-person-row>
@@ -76,6 +76,59 @@
                         <button type="button" class="btn btn-outline-secondary" data-remove-responsible-person>
                             Remover
                         </button>
+                    </div>
+                    <div class="col-12">
+                        <fieldset class="border rounded p-3">
+                            <legend class="h6">Contatos (ao menos um)</legend>
+                            <div data-responsible-person-contact-list>
+                                @for (var contactIndex = 0;
+                                     contactIndex < Model.ResponsiblePersons[index].Contacts.Count;
+                                     contactIndex++)
+                                {
+                                    <div class="row g-3 align-items-end mb-3"
+                                         data-responsible-person-contact-row>
+                                        <div class="col-md-3">
+                                            <label asp-for="ResponsiblePersons[index].Contacts[contactIndex].Type"
+                                                   data-contact-label="Type"
+                                                   class="form-label">Tipo</label>
+                                            <select asp-for="ResponsiblePersons[index].Contacts[contactIndex].Type"
+                                                    data-contact-input="Type"
+                                                    asp-items="Html.GetEnumSelectList<ResponsiblePersonContactType>()"
+                                                    class="form-select">
+                                                <option value="">Selecione</option>
+                                            </select>
+                                            <span asp-validation-for="ResponsiblePersons[index].Contacts[contactIndex].Type"
+                                                  data-contact-validation="Type"
+                                                  class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <label asp-for="ResponsiblePersons[index].Contacts[contactIndex].Value"
+                                                   data-contact-label="Value"
+                                                   class="form-label">Valor</label>
+                                            <input asp-for="ResponsiblePersons[index].Contacts[contactIndex].Value"
+                                                   data-contact-input="Value"
+                                                   class="form-control"
+                                                   autocomplete="off" />
+                                            <span asp-validation-for="ResponsiblePersons[index].Contacts[contactIndex].Value"
+                                                  data-contact-validation="Value"
+                                                  class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary"
+                                                    data-remove-responsible-person-contact>
+                                                Remover contato
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    data-add-responsible-person-contact>
+                                Adicionar telefone ou e-mail
+                            </button>
+                        </fieldset>
                     </div>
                 </div>
             }
@@ -123,6 +176,72 @@
         <div class="col-md-2">
             <button type="button" class="btn btn-outline-secondary" data-remove-responsible-person>
                 Remover
+            </button>
+        </div>
+        <div class="col-12">
+            <fieldset class="border rounded p-3">
+                <legend class="h6">Contatos (ao menos um)</legend>
+                <div data-responsible-person-contact-list>
+                    <div class="row g-3 align-items-end mb-3"
+                         data-responsible-person-contact-row>
+                        <div class="col-md-3">
+                            <label data-contact-label="Type" class="form-label">Tipo</label>
+                            <select data-contact-input="Type" class="form-select">
+                                <option value="">Selecione</option>
+                                @foreach (var option in Html.GetEnumSelectList<ResponsiblePersonContactType>())
+                                {
+                                    <option value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                            <span class="text-danger" data-contact-validation="Type"></span>
+                        </div>
+                        <div class="col-md-7">
+                            <label data-contact-label="Value" class="form-label">Valor</label>
+                            <input data-contact-input="Value" class="form-control" autocomplete="off" />
+                            <span class="text-danger" data-contact-validation="Value"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    data-remove-responsible-person-contact>
+                                Remover contato
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button"
+                        class="btn btn-sm btn-outline-primary"
+                        data-add-responsible-person-contact>
+                    Adicionar telefone ou e-mail
+                </button>
+            </fieldset>
+        </div>
+    </div>
+</template>
+
+<template id="responsible-person-contact-template">
+    <div class="row g-3 align-items-end mb-3" data-responsible-person-contact-row>
+        <div class="col-md-3">
+            <label data-contact-label="Type" class="form-label">Tipo</label>
+            <select data-contact-input="Type" class="form-select">
+                <option value="">Selecione</option>
+                @foreach (var option in Html.GetEnumSelectList<ResponsiblePersonContactType>())
+                {
+                    <option value="@option.Value">@option.Text</option>
+                }
+            </select>
+            <span class="text-danger" data-contact-validation="Type"></span>
+        </div>
+        <div class="col-md-7">
+            <label data-contact-label="Value" class="form-label">Valor</label>
+            <input data-contact-input="Value" class="form-control" autocomplete="off" />
+            <span class="text-danger" data-contact-validation="Value"></span>
+        </div>
+        <div class="col-md-2">
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    data-remove-responsible-person-contact>
+                Remover contato
             </button>
         </div>
     </div>
