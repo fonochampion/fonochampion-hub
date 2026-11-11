@@ -1,0 +1,52 @@
+@model CancellationReasonListViewModel
+@{
+    ViewData["Title"] = "Motivos de cancelamento";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h1 class="h2 mb-0">Motivos de cancelamento</h1>
+    <a class="btn btn-primary" asp-action="Create">Criar motivo</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Estado</th>
+                <th scope="col"><span class="visually-hidden">Ações</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Reasons.Count == 0)
+            {
+                <tr>
+                    <td colspan="4">Nenhum motivo de cancelamento cadastrado.</td>
+                </tr>
+            }
+            @foreach (var reason in Model.Reasons)
+            {
+                <tr>
+                    <td>@reason.Name</td>
+                    <td>@(string.IsNullOrEmpty(reason.Description) ? "—" : reason.Description)</td>
+                    <td>@(reason.IsActive ? "Ativo" : "Inativo")</td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-outline-primary btn-sm"
+                               asp-action="Edit"
+                               asp-route-id="@reason.Id">Editar</a>
+                            @if (reason.IsActive)
+                            {
+                                <form asp-action="Inactivate" method="post">
+                                    <input type="hidden" name="id" value="@reason.Id" />
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Inativar</button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
