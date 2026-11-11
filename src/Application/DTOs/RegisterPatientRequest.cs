@@ -6,7 +6,8 @@ public sealed record RegisterPatientRequest(
     string FullName,
     DateOnly DateOfBirth,
     string Cid10Code,
-    IReadOnlyList<RegisterResponsiblePersonRequest>? ResponsiblePersons = null);
+    IReadOnlyList<RegisterResponsiblePersonRequest>? ResponsiblePersons = null,
+    IReadOnlyList<int>? ProfessionalIds = null);
 
 public sealed record RegisterResponsiblePersonRequest(
     string FullName,

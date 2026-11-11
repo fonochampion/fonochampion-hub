@@ -15,4 +15,7 @@ public sealed class Professional
 
     public ICollection<ProfessionalContact> Contacts { get; set; } =
         new List<ProfessionalContact>();
+
+    public ICollection<PatientProfessional> PatientProfessionals { get; set; } =
+        new List<PatientProfessional>();
 }

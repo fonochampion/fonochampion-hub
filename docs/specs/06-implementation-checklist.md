@@ -24,7 +24,7 @@ When a new feature or approved scope change is specified, add its implementation
 
 Readiness is separate from status: keep the existing status values and mark an item ready only when its scope is sufficiently specified, all listed dependencies are `DONE`, and all relevant decision gates are resolved. Prioritize ready items with no dependencies before ready items whose dependencies are complete. Keep blocked items visible with the exact dependency or open decision that prevents implementation.
 
-IMP-001, IMP-002, IMP-003, IMP-004, IMP-005, IMP-006, IMP-007, IMP-008, IMP-018, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. Reassess other pending work against its listed dependencies and decision gates. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
+IMP-001, IMP-002, IMP-003, IMP-004, IMP-005, IMP-006, IMP-007, IMP-008, IMP-015, IMP-018, IMP-020, IMP-021, and IMP-022 are complete; no pending Phase 1 item is currently ready. Reassess other pending work against its listed dependencies and decision gates. Production hosting and deployment remain out of scope. Reassess readiness whenever specifications, decisions, dependencies, or repository instructions change.
 
 ## Phase 0 — Resolve specification gates
 
@@ -78,7 +78,7 @@ These are product decisions, not implementation tasks. Resolve each in the speci
 | ID | Feature | Depends on | Status |
 |---|---|---|---|
 | IMP-008 | Register a fonoaudiólogo with confirmed basic data, unique CPF, certifications, and telephone/email contacts. | IMP-002; DG-005 (registration scope) | DONE |
-| IMP-015 | Allow association of one or more existing, active professionals during initial patient registration, later through the patient record, and through scheduling when no active association exists; support each professional being associated with multiple patients. | IMP-005, IMP-008 | BLOCKED |
+| IMP-015 | Allow association of one or more existing, active professionals during initial patient registration, later through the patient record, and through scheduling when no active association exists; support each professional being associated with multiple patients. | IMP-005, IMP-008 | DONE |
 | IMP-017 | Schedule and maintain patient attendances with required scheduled date/time and a fixed duration option per attendance, patient/professional overlap prevention, scheduling-flow association creation when needed, status transitions, actual realization timestamps, late indication, rescheduling with inactive-participant removal and a new duration selection, cancellation, and one current evolution entry per professional. | IMP-015, IMP-018; DG-009, DG-012 | BLOCKED |
 | IMP-018 | Provide configurable cancellation-reason maintenance with create, list, edit, and inactivate operations; exclude the fixed `Remarcação` system reason, which is assigned automatically during rescheduling. | IMP-002; DG-012 | DONE |
 | IMP-019 | Remove patient-professional associations without deleting or altering existing attendance/evolution records or changing already scheduled attendance participants. | IMP-015, IMP-017 | BLOCKED |

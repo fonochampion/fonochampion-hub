@@ -22,6 +22,9 @@ public sealed class Patient
     public ICollection<ResponsiblePerson> ResponsiblePersons { get; set; } =
         new List<ResponsiblePerson>();
 
+    public ICollection<PatientProfessional> PatientProfessionals { get; set; } =
+        new List<PatientProfessional>();
+
     public static string NormalizeFullNameForComparison(string fullName) =>
         FullNameNormalizer.NormalizeForComparison(fullName);
 

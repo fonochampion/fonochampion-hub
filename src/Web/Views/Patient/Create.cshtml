@@ -41,6 +41,30 @@
         <span asp-validation-for="Cid10Code" class="text-danger"></span>
     </div>
     <fieldset class="mb-4">
+        <legend class="h5">Profissionais associados (opcional)</legend>
+        @if (Model.AvailableProfessionals.Count == 0)
+        {
+            <p class="form-text">Não há profissionais cadastrados disponíveis.</p>
+        }
+        else
+        {
+            <div class="list-group">
+                @foreach (var professional in Model.AvailableProfessionals)
+                {
+                    <label class="list-group-item">
+                        <input class="form-check-input me-2"
+                               type="checkbox"
+                               name="ProfessionalIds"
+                               value="@professional.Id"
+                               checked="@Model.ProfessionalIds.Contains(professional.Id)" />
+                        @professional.FullName
+                    </label>
+                }
+            </div>
+        }
+        <span asp-validation-for="ProfessionalIds" class="text-danger"></span>
+    </fieldset>
+    <fieldset class="mb-4">
         <legend class="h5">Responsáveis (opcional)</legend>
         <div id="responsible-person-list">
             @for (var index = 0; index < Model.ResponsiblePersons.Count; index++)

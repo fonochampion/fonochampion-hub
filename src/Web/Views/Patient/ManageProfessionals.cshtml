@@ -1,0 +1,62 @@
+@model PatientProfessionalManagementViewModel
+@{
+    ViewData["Title"] = "Associar profissionais";
+}
+
+<h1 class="h2 mb-2">Profissionais do paciente</h1>
+<p class="mb-4">@Model.PatientFullName</p>
+
+@if (TempData["PatientProfessionalNotice"] is string notice)
+{
+    <div class="alert alert-success" role="status">@notice</div>
+}
+
+<section class="mb-4" aria-labelledby="associated-professionals-heading">
+    <h2 id="associated-professionals-heading" class="h5">Profissionais associados</h2>
+    @if (Model.AssociatedProfessionals.Count == 0)
+    {
+        <p>Nenhum profissional associado.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var professional in Model.AssociatedProfessionals)
+            {
+                <li>@professional.FullName</li>
+            }
+        </ul>
+    }
+</section>
+
+<form asp-action="ManageProfessionals" asp-route-id="@Model.PatientId" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <fieldset class="mb-4">
+        <legend class="h5">Adicionar profissionais</legend>
+        @if (Model.AvailableProfessionals.Count == 0)
+        {
+            <p>Não há outros profissionais cadastrados disponíveis.</p>
+        }
+        else
+        {
+            <div class="list-group">
+                @foreach (var professional in Model.AvailableProfessionals)
+                {
+                    <label class="list-group-item">
+                        <input class="form-check-input me-2"
+                               type="checkbox"
+                               name="SelectedProfessionalIds"
+                               value="@professional.Id"
+                               checked="@Model.SelectedProfessionalIds.Contains(professional.Id)" />
+                        @professional.FullName
+                    </label>
+                }
+            </div>
+        }
+    </fieldset>
+    <button type="submit"
+            class="btn btn-primary"
+            disabled="@(Model.AvailableProfessionals.Count == 0)">
+        Associar selecionados
+    </button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Voltar aos pacientes</a>
+</form>

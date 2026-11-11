@@ -1,0 +1,49 @@
+@model IReadOnlyList<PatientListItemViewModel>
+@{
+    ViewData["Title"] = "Pacientes";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="h2 mb-0">Pacientes</h1>
+    <a asp-action="Create" class="btn btn-primary">Cadastrar paciente</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p>Nenhum paciente cadastrado.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <caption class="visually-hidden">Pacientes cadastrados</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Nome completo</th>
+                    <th scope="col">Data de nascimento</th>
+                    <th scope="col">CID-10</th>
+                    <th scope="col">Profissionais</th>
+                    <th scope="col"><span class="visually-hidden">Ações</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var patient in Model)
+                {
+                    <tr>
+                        <td>@patient.FullName</td>
+                        <td>@patient.DateOfBirth.ToString("dd/MM/yyyy")</td>
+                        <td>@patient.Cid10Code — @patient.Cid10Description</td>
+                        <td>@patient.AssociatedProfessionalCount</td>
+                        <td>
+                            <a asp-action="ManageProfessionals"
+                               asp-route-id="@patient.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Associar profissionais
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

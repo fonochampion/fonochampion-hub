@@ -18,4 +18,24 @@
     <dt class="col-sm-3">CID-10</dt>
     <dd class="col-sm-9">@Model.Cid10Code — @Model.Cid10Description</dd>
 </dl>
+<section class="mb-4" aria-labelledby="associated-professionals-heading">
+    <h2 id="associated-professionals-heading" class="h5">Profissionais associados</h2>
+    @if (Model.AssociatedProfessionalNames.Count == 0)
+    {
+        <p>Nenhum profissional associado.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var name in Model.AssociatedProfessionalNames)
+            {
+                <li>@name</li>
+            }
+        </ul>
+    }
+</section>
 <a asp-action="Create" class="btn btn-primary">Cadastrar outro paciente</a>
+<a asp-action="ManageProfessionals" asp-route-id="@Model.PatientId" class="btn btn-outline-primary">
+    Associar profissionais
+</a>
+<a asp-action="Index" class="btn btn-outline-secondary">Ver pacientes</a>

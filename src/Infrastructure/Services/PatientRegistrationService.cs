@@ -108,6 +108,15 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
             return PatientRegistrationResult.Failed(PatientRegistrationFailure.FutureDateOfBirth);
         }
 
+        var professionalIds = request.ProfessionalIds?.Distinct().ToArray() ?? [];
+        var professionals = await dbContext.Professionals
+            .Where(professional => professionalIds.Contains(professional.Id))
+            .ToListAsync(cancellationToken);
+        if (professionals.Count != professionalIds.Length)
+        {
+            return PatientRegistrationResult.Failed(PatientRegistrationFailure.InvalidProfessional);
+        }
+
         var catalogIsAvailable = await dbContext.Cid10CatalogVersions
             .AsNoTracking()
             .AnyAsync(version => version.IsCurrent, cancellationToken);
@@ -147,7 +156,14 @@ public sealed class PatientRegistrationService(ApplicationDbContext dbContext)
             DateOfBirth = request.DateOfBirth,
             Cid10CatalogEntryId = cidEntry.Id,
             Cid10CatalogEntry = cidEntry,
-            ResponsiblePersons = responsiblePersons
+            ResponsiblePersons = responsiblePersons,
+            PatientProfessionals = professionals
+                .Select(professional => new PatientProfessional
+                {
+                    ProfessionalId = professional.Id,
+                    Professional = professional
+                })
+                .ToList()
         };
 
         dbContext.Patients.Add(patient);
