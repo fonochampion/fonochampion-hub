@@ -28,6 +28,64 @@ public sealed class PatientRegistrationTests
     }
 
     [Fact]
+    public async Task RegisterAsync_persists_multiple_responsible_persons_with_the_patient()
+    {
+        await using var dbContext = CreateDbContext();
+        await AddCurrentCatalogEntryAsync(dbContext);
+        var service = new PatientRegistrationService(dbContext);
+
+        var result = await service.RegisterAsync(new RegisterPatientRequest(
+            "Maria Silva",
+            new DateOnly(1990, 5, 12),
+            "A00",
+            [
+                new RegisterResponsiblePersonRequest("Ana Silva", ResponsiblePersonKinship.Mother),
+                new RegisterResponsiblePersonRequest("João Silva", ResponsiblePersonKinship.Grandparent)
+            ]));
+
+        Assert.True(result.Succeeded);
+        var responsiblePersons = await dbContext.ResponsiblePersons
+            .OrderBy(person => person.Id)
+            .ToListAsync();
+        Assert.Collection(
+            responsiblePersons,
+            person =>
+            {
+                Assert.Equal("Ana Silva", person.FullName);
+                Assert.Equal("ANA SILVA", person.NormalizedFullName);
+                Assert.Equal(ResponsiblePersonKinship.Mother, person.Kinship);
+                Assert.Equal(result.Patient!.Id, person.PatientId);
+            },
+            person =>
+            {
+                Assert.Equal("João Silva", person.FullName);
+                Assert.Equal(ResponsiblePersonKinship.Grandparent, person.Kinship);
+                Assert.Equal(result.Patient!.Id, person.PatientId);
+            });
+    }
+
+    [Fact]
+    public async Task RegisterAsync_rejects_duplicate_responsible_names_after_normalization()
+    {
+        await using var dbContext = CreateDbContext();
+        await AddCurrentCatalogEntryAsync(dbContext);
+        var service = new PatientRegistrationService(dbContext);
+
+        var result = await service.RegisterAsync(new RegisterPatientRequest(
+            "Maria Silva",
+            new DateOnly(1990, 5, 12),
+            "A00",
+            [
+                new RegisterResponsiblePersonRequest("Ána Silva", ResponsiblePersonKinship.Mother),
+                new RegisterResponsiblePersonRequest("  ána   silva ", ResponsiblePersonKinship.LegalGuardian)
+            ]));
+
+        Assert.Equal(PatientRegistrationFailure.DuplicateResponsiblePerson, result.Failure);
+        Assert.Empty(await dbContext.Patients.ToListAsync());
+        Assert.Empty(await dbContext.ResponsiblePersons.ToListAsync());
+    }
+
+    [Fact]
     public async Task RegisterAsync_rejects_duplicate_normalized_name_and_birth_date()
     {
         await using var dbContext = CreateDbContext();

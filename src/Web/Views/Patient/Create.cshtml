@@ -1,4 +1,5 @@
 @model CreatePatientViewModel
+@using FonoChampionHub.Domain.Enums
 @{
     ViewData["Title"] = "Cadastrar paciente";
 }
@@ -39,10 +40,96 @@
         </p>
         <span asp-validation-for="Cid10Code" class="text-danger"></span>
     </div>
+    <fieldset class="mb-4">
+        <legend class="h5">Responsáveis (opcional)</legend>
+        <div id="responsible-person-list" data-next-index="@Model.ResponsiblePersons.Count">
+            @for (var index = 0; index < Model.ResponsiblePersons.Count; index++)
+            {
+                <div class="row g-3 align-items-end mb-3" data-responsible-person-row>
+                    <div class="col-md-5">
+                        <label asp-for="ResponsiblePersons[index].FullName"
+                               data-responsible-person-label="FullName"
+                               class="form-label">Nome completo</label>
+                        <input asp-for="ResponsiblePersons[index].FullName"
+                               data-responsible-person-input="FullName"
+                               class="form-control"
+                               autocomplete="name" />
+                        <span asp-validation-for="ResponsiblePersons[index].FullName"
+                              data-responsible-person-validation="FullName"
+                              class="text-danger"></span>
+                    </div>
+                    <div class="col-md-5">
+                        <label asp-for="ResponsiblePersons[index].Kinship"
+                               data-responsible-person-label="Kinship"
+                               class="form-label">Parentesco</label>
+                        <select asp-for="ResponsiblePersons[index].Kinship"
+                                data-responsible-person-input="Kinship"
+                                asp-items="Html.GetEnumSelectList<ResponsiblePersonKinship>()"
+                                class="form-select">
+                            <option value="">Selecione</option>
+                        </select>
+                        <span asp-validation-for="ResponsiblePersons[index].Kinship"
+                              data-responsible-person-validation="Kinship"
+                              class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-outline-secondary" data-remove-responsible-person>
+                            Remover
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-outline-primary" id="add-responsible-person">
+            Adicionar responsável
+        </button>
+    </fieldset>
     <button type="submit" class="btn btn-primary">Cadastrar paciente</button>
 </form>
+
+<template id="responsible-person-template">
+    <div class="row g-3 align-items-end mb-3" data-responsible-person-row>
+        <div class="col-md-5">
+            <label for="ResponsiblePersons___index___FullName"
+                   data-responsible-person-label="FullName"
+                   class="form-label">Nome completo</label>
+            <input id="ResponsiblePersons___index___FullName"
+                   name="ResponsiblePersons[__index__].FullName"
+                   data-responsible-person-input="FullName"
+                   class="form-control"
+                   autocomplete="name" />
+            <span class="text-danger"
+                  data-valmsg-for="ResponsiblePersons[__index__].FullName"
+                  data-responsible-person-validation="FullName"></span>
+        </div>
+        <div class="col-md-5">
+            <label for="ResponsiblePersons___index___Kinship"
+                   data-responsible-person-label="Kinship"
+                   class="form-label">Parentesco</label>
+            <select id="ResponsiblePersons___index___Kinship"
+                    name="ResponsiblePersons[__index__].Kinship"
+                    data-responsible-person-input="Kinship"
+                    class="form-select">
+                <option value="">Selecione</option>
+                @foreach (var option in Html.GetEnumSelectList<ResponsiblePersonKinship>())
+                {
+                    <option value="@option.Value">@option.Text</option>
+                }
+            </select>
+            <span class="text-danger"
+                  data-valmsg-for="ResponsiblePersons[__index__].Kinship"
+                  data-responsible-person-validation="Kinship"></span>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-outline-secondary" data-remove-responsible-person>
+                Remover
+            </button>
+        </div>
+    </div>
+</template>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/patient-cid-search.js" asp-append-version="true"></script>
+    <script src="~/js/patient-responsible-persons.js" asp-append-version="true"></script>
 }

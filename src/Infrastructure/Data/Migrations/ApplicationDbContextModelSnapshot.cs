@@ -136,6 +136,37 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.ToTable("Patients", (string)null);
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePerson", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Kinship")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("NormalizedFullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId", "NormalizedFullName")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ResponsiblePersons_PatientId_NormalizedFullName");
+
+                    b.ToTable("ResponsiblePersons", (string)null);
+                });
+
             modelBuilder.Entity("FonoChampionHub.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -376,6 +407,17 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
                     b.Navigation("Cid10CatalogEntry");
                 });
 
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.ResponsiblePerson", b =>
+                {
+                    b.HasOne("FonoChampionHub.Domain.Entities.Patient", "Patient")
+                        .WithMany("ResponsiblePersons")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -435,6 +477,11 @@ namespace FonoChampionHub.Infrastructure.Data.Migrations
             modelBuilder.Entity("FonoChampionHub.Domain.Entities.Cid10CatalogVersion", b =>
                 {
                     b.Navigation("Entries");
+                });
+
+            modelBuilder.Entity("FonoChampionHub.Domain.Entities.Patient", b =>
+                {
+                    b.Navigation("ResponsiblePersons");
                 });
 #pragma warning restore 612, 618
         }

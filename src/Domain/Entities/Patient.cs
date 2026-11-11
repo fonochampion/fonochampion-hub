@@ -1,4 +1,4 @@
-using System.Text;
+using FonoChampionHub.Domain.Services;
 
 namespace FonoChampionHub.Domain.Entities;
 
@@ -19,32 +19,11 @@ public sealed class Patient
 
     public Cid10CatalogEntry Cid10CatalogEntry { get; set; } = null!;
 
-    public static string NormalizeFullNameForComparison(string fullName)
-    {
-        ArgumentNullException.ThrowIfNull(fullName);
+    public ICollection<ResponsiblePerson> ResponsiblePersons { get; set; } =
+        new List<ResponsiblePerson>();
 
-        var normalized = new StringBuilder(fullName.Length);
-        var pendingWhitespace = false;
-
-        foreach (var character in fullName.Normalize(NormalizationForm.FormC))
-        {
-            if (char.IsWhiteSpace(character))
-            {
-                pendingWhitespace = normalized.Length > 0;
-                continue;
-            }
-
-            if (pendingWhitespace)
-            {
-                normalized.Append(' ');
-                pendingWhitespace = false;
-            }
-
-            normalized.Append(char.ToUpperInvariant(character));
-        }
-
-        return normalized.ToString();
-    }
+    public static string NormalizeFullNameForComparison(string fullName) =>
+        FullNameNormalizer.NormalizeForComparison(fullName);
 
     public string GetAgeDisplay(DateOnly asOf)
     {

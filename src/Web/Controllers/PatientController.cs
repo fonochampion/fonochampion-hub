@@ -64,13 +64,52 @@ public sealed class PatientController(
         CreatePatientViewModel model,
         CancellationToken cancellationToken)
     {
+        var responsiblePersonRequests = new List<RegisterResponsiblePersonRequest>();
+        var responsiblePersonInputs = model.ResponsiblePersons ?? [];
+        for (var index = 0; index < responsiblePersonInputs.Count; index++)
+        {
+            var input = responsiblePersonInputs[index];
+            var fullName = input.FullName?.Trim() ?? string.Empty;
+            if (fullName.Length == 0 && input.Kinship is null)
+            {
+                continue;
+            }
+
+            if (fullName.Length == 0)
+            {
+                ModelState.AddModelError(
+                    $"ResponsiblePersons[{index}].FullName",
+                    "Informe o nome completo do responsável.");
+            }
+
+            if (input.Kinship is null || !Enum.IsDefined(input.Kinship.Value))
+            {
+                ModelState.AddModelError(
+                    $"ResponsiblePersons[{index}].Kinship",
+                    "Selecione o parentesco do responsável.");
+            }
+
+            if (fullName.Length > 0 &&
+                input.Kinship is { } kinship &&
+                Enum.IsDefined(kinship))
+            {
+                responsiblePersonRequests.Add(new RegisterResponsiblePersonRequest(
+                    fullName,
+                    kinship));
+            }
+        }
+
         if (!ModelState.IsValid || model.DateOfBirth is null)
         {
             return View(model);
         }
 
         var result = await patientRegistrationService.RegisterAsync(
-            new RegisterPatientRequest(model.FullName, model.DateOfBirth.Value, model.Cid10Code),
+            new RegisterPatientRequest(
+                model.FullName,
+                model.DateOfBirth.Value,
+                model.Cid10Code,
+                responsiblePersonRequests),
             cancellationToken);
 
         if (!result.Succeeded)
@@ -106,6 +145,10 @@ public sealed class PatientController(
             PatientRegistrationFailure.DuplicatePatient =>
                 (nameof(CreatePatientViewModel.FullName),
                     "Já existe um paciente com esse nome e data de nascimento."),
+            PatientRegistrationFailure.InvalidResponsiblePerson =>
+                (string.Empty, "Informe nome completo e parentesco para cada responsável adicionado."),
+            PatientRegistrationFailure.DuplicateResponsiblePerson =>
+                (string.Empty, "Não é possível cadastrar nomes duplicados de responsáveis para o mesmo paciente."),
             PatientRegistrationFailure.CatalogUnavailable =>
                 (string.Empty, "O catálogo CID-10 ainda não foi carregado neste ambiente."),
             PatientRegistrationFailure.InvalidCid10Code =>
